@@ -206,8 +206,7 @@ CARRUSEL PRINCIPAL
   inset: 0 0 0 43%;
   background:
     linear-gradient(90deg, #071724 0%, transparent 45%),
-    linear-gradient(0deg, #06172366, #06172311),
-    url("https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=85") center 43% / cover no-repeat;
+    linear-gradient(0deg, #06172366, #06172311);
   content: "";
   opacity: 0.68;
   pointer-events: none;
@@ -252,14 +251,6 @@ CARRUSEL PRINCIPAL
 .hero-arrow:hover {
   background: var(--gold);
   color: var(--navy);
-}
-
-.hero-arrow-left,
-.hero-arrow-right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
 }
 
 .hero-arrow-left {
@@ -373,35 +364,6 @@ CARRUSEL PRINCIPAL
   transform: scale(1.25);
 }
 
-.hero-dots span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--white);
-}
-
-.hero-dots span.selected {
-  width: 22px;
-  border-radius: 8px;
-  background: var(--gold);
-}
-
-.hero-dot {
-  width: 9px;
-  height: 9px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: #ffffff90;
-  cursor: pointer;
-}
-
-.hero-dot.active {
-  width: 22px;
-  border-radius: 8px;
-  background: var(--gold);
-}
-
 .slide-counter {
   position: absolute;
   right: 25px;
@@ -446,22 +408,19 @@ SECCIONES Y TÍTULOS
 TARJETAS DE CATEGORÍAS
 ========================================= */
 
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 18px;
-}
-
 .category-card {
   position: relative;
   display: flex;
+  flex: 0 0 300px;
   min-width: 0;
+  min-height: 180px;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border);
   border-radius: 7px;
   background: var(--white);
   box-shadow: 0 4px 14px #0b25300a;
+  scroll-snap-align: start;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -799,10 +758,6 @@ RESPONSIVE: TABLET Y LAPTOP PEQUEÑA
     flex-wrap: wrap;
     gap: 4px 20px;
   }
-
-  .category-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 /* =========================================
@@ -867,7 +822,6 @@ RESPONSIVE: MÓVILES Y TABLETAS PEQUEÑAS
 
     background: var(--navy);
   }
-
 
   .hero-arrow {
     display: none;
@@ -950,12 +904,6 @@ RESPONSIVE: MÓVILES Y TABLETAS PEQUEÑAS
     padding: 32px 55px 55px;
   }
 
-  .hero-arrow {
-    width: 34px;
-    height: 34px;
-    font-size: 25px;
-  }
-
   .hero-arrow-left {
     left: 10px;
   }
@@ -983,11 +931,6 @@ RESPONSIVE: MÓVILES Y TABLETAS PEQUEÑAS
 
   .section {
     padding: 38px 5%;
-  }
-
-  .category-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
   }
 
   .category-body {
@@ -1071,10 +1014,6 @@ RESPONSIVE: TELÉFONOS PEQUEÑOS
     gap: 16px;
   }
 
-  .category-grid {
-    grid-template-columns: 1fr;
-  }
-
   .hero h1 {
     font-size: 37px;
   }
@@ -1133,20 +1072,8 @@ APARTADOS: FILA HORIZONTAL DESLIZABLE
   scrollbar-color: var(--navy-light) #edf0f2;
 }
 
-.category-card {
-  flex: 0 0 300px;
-  min-width: 0;
-  min-height: 180px;
-  overflow: visible;
-  scroll-snap-align: start;
-}
-
 .category-card::before {
   border-radius: 7px 7px 0 0;
-}
-
-.category-icon {
-  margin-top: -22px;
 }
 
 /* Flechas laterales */
@@ -1196,10 +1123,6 @@ APARTADOS: FILA HORIZONTAL DESLIZABLE
 
   .category-grid {
     gap: 14px;
-  }
-
-  .category-card {
-    flex-basis: 270px;
   }
 
   .category-arrow {

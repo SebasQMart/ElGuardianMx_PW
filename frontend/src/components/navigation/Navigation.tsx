@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "./Navigation.module.css";
 
 export default function Navigation() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,8 +15,6 @@ export default function Navigation() {
             document.body.style.overflow = overflowAnterior;
         };
     }, [mobileMenuOpen]);
-
-    const closeMobileMenu = () => setMobileMenuOpen(false);
 
     return (
         <header className="site-header">
