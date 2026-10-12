@@ -39,14 +39,14 @@ export default function Navigation() {
                 className={`header-menu ${mobileMenuOpen ? "is-open" : ""}`}
             >
                 <nav className="main-nav" aria-label="Navegación principal">
-                    <a className="active" href="#" onClick={() => setMobileMenuOpen(false)}>Inicio</a>
+                    <a className="active" href="" onClick={() => setMobileMenuOpen(false)}>Inicio</a>
                     <a href="#conocenos" onClick={() => setMobileMenuOpen(false)}>Conócenos</a>
-                    <a href="#secciones" onClick={() => setMobileMenuOpen(false)}>Aprende</a>
+                    <a href="#aprende" onClick={() => setMobileMenuOpen(false)}>Aprende</a>
                     <a href="#datos" onClick={() => setMobileMenuOpen(false)}>Datos</a>
                     <a href="#audiencias" onClick={() => setMobileMenuOpen(false)}>Audiencias</a>
                     <a href="#procesos" onClick={() => setMobileMenuOpen(false)}>Procesos</a>
                     <a href="#presupuesto" onClick={() => setMobileMenuOpen(false)}>Presupuesto</a>
-                    <a href="#investigaciones" onClick={() => setMobileMenuOpen(false)}>Publicaciones</a>
+                    <a href="publicaciones" onClick={() => setMobileMenuOpen(false)}>Publicaciones</a>
                     <a href="#transparencia" onClick={() => setMobileMenuOpen(false)}>Transparencia</a>
                     <a href="#participa" onClick={() => setMobileMenuOpen(false)}>Participa</a>
                 </nav>

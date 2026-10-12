@@ -1,0 +1,667 @@
+.publicaciones {
+    --pub-navy: var(--navy, #071a29);
+    --pub-navy-light: var(--navy-light, #142c3e);
+    --pub-gold: var(--gold, #e3a01e);
+    --pub-white: var(--white, #ffffff);
+    --pub-text: #172c3e;
+    --pub-muted: #607184;
+    --pub-border: #dce4ea;
+    color: var(--pub-text);
+    background: #f5f7f9;
+    min-height: 100vh;
+}
+
+.publicaciones * {
+    box-sizing: border-box;
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    color: white;
+    background: var(--pub-navy);
+}
+
+.heroFondo {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        linear-gradient(90deg,
+            rgba(7, 26, 41, 0.99) 0%,
+            rgba(7, 26, 41, 0.94) 45%,
+            rgba(7, 26, 41, 0.74) 100%),
+        url("https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1800&q=85") center 44% / cover no-repeat;
+}
+
+.heroContenido {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(400px, 1.1fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 76px);
+    width: min(1400px, 100%);
+    min-height: 335px;
+    margin: 0 auto;
+    padding: 48px 5.5%;
+}
+
+.heroTexto {
+    max-width: 600px;
+}
+
+.eyebrow,
+.eyebrowOscuro {
+    display: inline-block;
+    margin-bottom: 14px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+}
+
+.eyebrow {
+    color: var(--pub-gold);
+}
+
+.heroTexto h1 {
+    margin: 0 0 16px;
+    color: white;
+    font-size: clamp(2.4rem, 4.5vw, 4rem);
+    font-weight: 750;
+    line-height: 1.05;
+    letter-spacing: -0.045em;
+}
+
+.heroTexto>p {
+    max-width: 540px;
+    margin: 0;
+    color: #d6e0e8;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.avisoDemo {
+    display: inline-flex;
+    margin-top: 23px;
+    padding: 7px 10px;
+    border: 1px solid rgba(227, 160, 30, 0.55);
+    border-radius: 4px;
+    color: #ffd782;
+    background: rgba(227, 160, 30, 0.1);
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.destacada {
+    display: grid;
+    grid-template-columns: minmax(140px, 0.85fr) minmax(0, 1.15fr);
+    gap: 20px;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    border-radius: 9px;
+    color: white;
+    background: rgba(5, 22, 36, 0.78);
+    text-decoration: none;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+    transition:
+        border-color 180ms ease,
+        transform 180ms ease;
+}
+
+.destacada:hover {
+    border-color: var(--pub-gold);
+    transform: translateY(-2px);
+}
+
+.destacadaImagen {
+    width: 100%;
+    min-height: 205px;
+    border-radius: 5px;
+    background-position: center;
+    background-size: cover;
+}
+
+.destacadaContenido {
+    min-width: 0;
+}
+
+.etiquetaDestacada {
+    color: #f2b53e;
+    font-size: 0.67rem;
+    font-weight: 800;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.destacadaContenido h2 {
+    margin: 11px 0;
+    color: white;
+    font-size: clamp(1.1rem, 1.7vw, 1.55rem);
+    line-height: 1.3;
+}
+
+.destacadaContenido p {
+    margin: 0;
+    color: #d1dce5;
+    font-size: 0.85rem;
+    line-height: 1.65;
+}
+
+.botonDestacado {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 18px;
+    padding: 11px 14px;
+    border-radius: 4px;
+    color: #151c21;
+    background: var(--pub-gold);
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.archivo {
+    width: min(1400px, 100%);
+    margin: 0 auto;
+    padding: 48px 5.5% 64px;
+}
+
+.encabezadoArchivo {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 25px;
+}
+
+.eyebrowOscuro {
+    margin-bottom: 8px;
+    color: #a66b00;
+}
+
+.encabezadoArchivo h2 {
+    margin: 0;
+    color: var(--pub-navy);
+    font-size: clamp(1.55rem, 2.6vw, 2.1rem);
+    line-height: 1.2;
+    letter-spacing: -0.035em;
+}
+
+.encabezadoArchivo p {
+    margin: 10px 0 0;
+    color: var(--pub-muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+}
+
+.total {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--pub-border);
+    border-radius: 5px;
+    color: var(--pub-navy);
+    background: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.panelFiltros {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.2fr) minmax(0, 2fr);
+    align-items: end;
+    gap: 18px;
+    margin-bottom: 28px;
+    padding: 19px;
+    border: 1px solid var(--pub-border);
+    border-radius: 8px;
+    background: white;
+}
+
+.busqueda {
+    display: flex;
+    min-width: 0;
+    height: 46px;
+    border: 1px solid #cbd6df;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.busqueda:focus-within {
+    border-color: #b17b15;
+    box-shadow: 0 0 0 3px rgba(227, 160, 30, 0.15);
+}
+
+.busqueda input {
+    width: 100%;
+    min-width: 0;
+    padding: 0 13px;
+    border: 0;
+    outline: none;
+    color: var(--pub-text);
+    background: white;
+    font: inherit;
+    font-size: 0.84rem;
+}
+
+.busqueda input::placeholder {
+    color: #8998a7;
+}
+
+.busqueda button {
+    display: grid;
+    flex: 0 0 46px;
+    place-items: center;
+    border: 0;
+    color: var(--pub-navy);
+    background: var(--pub-gold);
+    cursor: pointer;
+    font-size: 1.55rem;
+}
+
+.filtros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.filtros label {
+    display: grid;
+    min-width: 0;
+    gap: 6px;
+}
+
+.filtros label>span {
+    color: #5a6b7c;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.filtros select {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 9px;
+    border: 1px solid #d4dde5;
+    border-radius: 5px;
+    color: var(--pub-text);
+    background: #fff;
+    font: inherit;
+    font-size: 0.79rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 23px;
+}
+
+.tarjeta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--pub-border);
+    border-radius: 7px;
+    background: white;
+    box-shadow: 0 3px 12px rgba(7, 26, 41, 0.035);
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.tarjeta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(7, 26, 41, 0.1);
+}
+
+.imagenEnlace {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: #dce4ea;
+}
+
+.imagen {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-position: center;
+    background-size: cover;
+    transition: transform 250ms ease;
+}
+
+.tarjeta:hover .imagen {
+    transform: scale(1.035);
+}
+
+.etiqueta {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 9px;
+    border-radius: 3px;
+    color: white;
+    background: var(--pub-navy);
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.tarjetaContenido {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 17px;
+}
+
+.metadatos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    color: var(--pub-muted);
+    font-size: 0.72rem;
+}
+
+.metadatos span:first-child {
+    color: #9b680e;
+    font-weight: 750;
+}
+
+.tarjetaContenido h3 {
+    margin: 12px 0 9px;
+    font-size: 1.08rem;
+    line-height: 1.4;
+}
+
+.tarjetaContenido h3 a {
+    color: var(--pub-navy);
+    text-decoration: none;
+}
+
+.tarjetaContenido h3 a:hover {
+    color: #9b680e;
+}
+
+.tarjetaContenido>p {
+    margin: 0 0 18px;
+    color: #5c6e7e;
+    font-size: 0.84rem;
+    line-height: 1.7;
+}
+
+.tarjetaPie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid #edf0f3;
+}
+
+.tarjetaPie>span {
+    color: #68798a;
+    font-size: 0.72rem;
+}
+
+.tarjetaPie>a {
+    flex-shrink: 0;
+    color: #96610a;
+    font-size: 0.79rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.tarjetaPie>a:hover {
+    text-decoration: underline;
+}
+
+.marcaDemo {
+    margin-top: 12px;
+    color: #7a8794;
+    font-size: 0.68rem;
+}
+
+.paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin-top: 35px;
+}
+
+.paginacion button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 0 13px;
+    border: 1px solid var(--pub-border);
+    border-radius: 5px;
+    color: var(--pub-navy);
+    background: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.paginacion button:hover:not(:disabled) {
+    border-color: var(--pub-gold);
+    background: #fffaf0;
+}
+
+.paginacion button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+.paginaIndicador {
+    color: #526477;
+    font-size: 0.82rem;
+}
+
+.sinResultados {
+    padding: 60px 20px;
+    border: 1px dashed #cbd6df;
+    border-radius: 8px;
+    text-align: center;
+    background: white;
+}
+
+.sinResultados>span {
+    color: #a66b00;
+    font-size: 2.2rem;
+}
+
+.sinResultados h3 {
+    margin: 12px 0 8px;
+    color: var(--pub-navy);
+}
+
+.sinResultados p {
+    color: var(--pub-muted);
+    font-size: 0.9rem;
+}
+
+.sinResultados button {
+    margin-top: 10px;
+    padding: 11px 15px;
+    border: 0;
+    border-radius: 4px;
+    color: var(--pub-navy);
+    background: var(--pub-gold);
+    cursor: pointer;
+    font-weight: 750;
+}
+
+.soloLectores {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (min-width: 1250px) {
+    .grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .heroContenido {
+        grid-template-columns: minmax(0, 0.95fr) minmax(460px, 1.05fr);
+    }
+}
+
+@media (max-width: 1000px) {
+    .heroContenido {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-top: 42px;
+        padding-bottom: 42px;
+    }
+
+    .heroTexto {
+        max-width: 720px;
+    }
+
+    .destacada {
+        grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.3fr);
+    }
+
+    .panelFiltros {
+        grid-template-columns: 1fr;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .heroContenido {
+        gap: 23px;
+        padding: 32px 5% 28px;
+    }
+
+    .heroTexto h1 {
+        font-size: clamp(2.2rem, 10vw, 3rem);
+    }
+
+    .heroTexto>p {
+        font-size: 0.91rem;
+        line-height: 1.7;
+    }
+
+    .destacada {
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .destacadaImagen {
+        min-height: 180px;
+        border-radius: 0;
+    }
+
+    .destacadaContenido {
+        padding: 17px;
+    }
+
+    .destacadaContenido h2 {
+        font-size: 1.25rem;
+    }
+
+    .archivo {
+        padding: 35px 5% 45px;
+    }
+
+    .encabezadoArchivo {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .encabezadoArchivo h2 {
+        font-size: 1.6rem;
+    }
+
+    .panelFiltros {
+        gap: 14px;
+        padding: 13px;
+        margin-bottom: 20px;
+    }
+
+    .filtros {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 9px;
+    }
+
+    .filtros label:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .imagen {
+        aspect-ratio: 16 / 9;
+    }
+
+    .tarjetaContenido {
+        padding: 16px;
+    }
+
+    .tarjetaContenido h3 {
+        font-size: 1.1rem;
+    }
+
+    .paginacion {
+        gap: 10px;
+        margin-top: 26px;
+    }
+
+    .paginacion button {
+        padding: 0 10px;
+    }
+
+    .paginaIndicador {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .tarjeta,
+    .imagen,
+    .destacada {
+        transition: none;
+    }
+
+    .tarjeta:hover,
+    .destacada:hover {
+        transform: none;
+    }
+
+    .tarjeta:hover .imagen {
+        transform: none;
+    }
+}
