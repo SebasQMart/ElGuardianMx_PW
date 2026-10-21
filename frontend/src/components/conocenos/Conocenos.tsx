@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styles from "./Conocenos.module.css";
 import Image from "next/image";
 //import Link from "next/link";
@@ -11,6 +11,8 @@ const aliados = [
         nombre: "UAEM",
         descripcion: "Universidad Autónoma del Estado de México",
         tipo: "Institución",
+        ubicacion: "Estado de México, México",
+        sitioOficial: "https://www.uaemex.mx/",
         imagen: "/aliados/erenchan.jpg",
         alt: "Logotipo de UAEM"
     },
@@ -18,6 +20,8 @@ const aliados = [
         nombre: "Carlos Quintero Juan",
         descripcion: "Investigador en políticas públicas y transparencia",
         tipo: "Persona",
+        ubicacion: "Plaza Arcangel, Cuernavaca Centro",
+        sitioOficial: "https://www.facebook.com/profile.php?id=61573475333950",
         imagen: "/aliados/carlos-quintero-juan.png",
         alt: "Fotografía de Carlos Quintero Juan"
     },
@@ -25,6 +29,8 @@ const aliados = [
         nombre: "Transparencia Mexicana",
         descripcion: "Organización de la sociedad civil por la transparencia",
         tipo: "Organización",
+        ubicacion: "Cuernavaca, Morelos, México",
+        sitioOficial: "",
         imagen: "/aliados/sebastian-quintero.jpg",
         alt: "Fotografía de Sebastian Quintero"
     },
@@ -32,6 +38,8 @@ const aliados = [
         nombre: "IMCO",
         descripcion: "Instituto Mexicano para la Competitividad",
         tipo: "Institución",
+        ubicacion: "Cuernavaca, Morelos, México",
+        sitioOficial: "",
         imagen: "/aliados/jennsanli.png",
         alt: "Fotografía de Jennsanli"
     },
@@ -39,6 +47,8 @@ const aliados = [
         nombre: "Red por la Rendición de Cuentas",
         descripcion: "Alianza enfocada en rendición de cuentas",
         tipo: "Organización",
+        ubicacion: "Cuernavaca, Morelos, México",
+        sitioOficial: "",
         imagen: "/aliados/erenchan.jpg",
         alt: "Logotipo de Red por la Rendición de Cuentas"
     },
@@ -46,6 +56,7 @@ const aliados = [
 
 export default function Conocenos() {
     const carruselRef = useRef<HTMLDivElement>(null);
+    const [aliadoSeleccionado, setAliadoSeleccionado] = useState<(typeof aliados)[number] | null>(null);
 
     const moverCarrusel = (direccion: "izquierda" | "derecha") => {
         const carrusel = carruselRef.current;
@@ -160,7 +171,20 @@ export default function Conocenos() {
 
                     <div className={styles.carrusel} ref={carruselRef}>
                         {aliados.map((aliado) => (
-                            <article className={styles.tarjetaAliado} key={aliado.nombre}>
+                            <article
+                                className={styles.tarjetaAliado}
+                                key={aliado.nombre}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`Ver información de ${aliado.nombre}`}
+                                onClick={() => setAliadoSeleccionado(aliado)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        setAliadoSeleccionado(aliado);
+                                    }
+                                }}
+                            >
                                 <div className={styles.marcaAliado}>
                                     <Image
                                         src={aliado.imagen}
@@ -199,6 +223,77 @@ export default function Conocenos() {
                     deberán validarse antes de publicar.
                 </p>
             </section>
+
+            {aliadoSeleccionado && (
+                <div
+                    className={styles.fondoModal}
+                    onClick={() => setAliadoSeleccionado(null)}
+                >
+                    <section
+                        className={styles.modalAliado}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="nombreAliado"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            className={styles.cerrarModal}
+                            aria-label="Cerrar ficha del aliado"
+                            onClick={() => setAliadoSeleccionado(null)}
+                        >
+                            ×
+                        </button>
+
+                        <div className={styles.imagenModal}>
+                            <Image
+                                src={aliadoSeleccionado.imagen}
+                                alt={aliadoSeleccionado.alt}
+                                width={180}
+                                height={140}
+                                className={
+                                    aliadoSeleccionado.tipo === "Persona"
+                                        ? styles.fotoModal
+                                        : styles.logoModal
+                                }
+                            />
+                        </div>
+
+                        <div className={styles.contenidoModal}>
+                            <span className={styles.etiqueta}>
+                                {aliadoSeleccionado.tipo}
+                            </span>
+
+                            <h2 id="nombreAliado">{aliadoSeleccionado.nombre}</h2>
+
+                            <p className={styles.descripcionModal}>
+                                {aliadoSeleccionado.descripcion}
+                            </p>
+
+                            <div className={styles.datoModal}>
+                                <strong>Ubicación</strong>
+                                <p>{aliadoSeleccionado.ubicacion || "Por confirmar"}</p>
+                            </div>
+
+                            {aliadoSeleccionado.sitioOficial ? (
+                                <a
+                                    href={aliadoSeleccionado.sitioOficial}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.enlaceOficial}
+                                >
+                                    Visitar sitio oficial
+                                    <span aria-hidden="true"> ↗</span>
+                                </a>
+                            ) : (
+                                <p className={styles.enlacePendiente}>
+                                    Sitio oficial o perfil social pendiente de verificar.
+                                </p>
+                            )}
+                        </div>
+                    </section>
+                </div>
+            )}
 
             <section className={styles.llamadoAccion}>
                 <div>

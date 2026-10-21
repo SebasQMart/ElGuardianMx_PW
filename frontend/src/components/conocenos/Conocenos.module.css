@@ -209,7 +209,7 @@
     display: flex;
     gap: 16px;
     overflow-x: auto;
-    padding: 3px 2px 14px;
+    padding: 12px 2px 14px;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
@@ -223,11 +223,12 @@
     display: flex;
     flex: 0 0 calc((100% - 64px) / 5);
     flex-direction: column;
+    cursor: pointer;
     min-width: 0;
-    min-height: 190px;
-    padding: 22px 17px 18px;
-    border: 1px solid var(--borde);
-    border-radius: 5px;
+    min-height: 240px;
+    padding: 16px;
+    border: 1px solid #dce5ed;
+    border-radius: 8px;
     background: #fff;
     scroll-snap-align: start;
     transition:
@@ -236,10 +237,138 @@
         border-color 180ms ease;
 }
 
+.tarjetaAliado:focus-visible {
+    outline: 3px solid #c6a45c;
+    outline-offset: 3px;
+}
+
 .tarjetaAliado:hover {
-    transform: translateY(-3px);
-    border-color: #b7c9d9;
-    box-shadow: 0 8px 20px rgba(9, 37, 65, 0.07);
+    transform: translateY(-10px);
+    border-color: #c6a45c;
+    box-shadow: 0 10px 24px rgb(16 35 59 / 10%);
+}
+
+.fondoModal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgb(8 20 34 / 72%);
+    backdrop-filter: blur(4px);
+}
+
+.modalAliado {
+    position: relative;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 28px;
+    width: min(720px, 100%);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 36px;
+    border: 1px solid #dce5ed;
+    border-top: 4px solid #c6a45c;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 24px 70px rgb(0 0 0 / 25%);
+}
+
+.cerrarModal {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: #f0f3f6;
+    color: #10233b;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.cerrarModal:hover {
+    background: #e2e8ee;
+}
+
+.imagenModal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    padding: 16px;
+    border: 1px solid #e8edf2;
+    border-radius: 8px;
+    background: #f7f9fb;
+}
+
+.logoModal {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+}
+
+.fotoModal {
+    display: block;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.contenidoModal h2 {
+    margin: 12px 0;
+    color: #10233b;
+    font-size: 1.7rem;
+    line-height: 1.2;
+}
+
+.descripcionModal {
+    margin-bottom: 22px;
+    color: #4b5968;
+    line-height: 1.7;
+}
+
+.datoModal {
+    margin-bottom: 24px;
+}
+
+.datoModal strong {
+    color: #10233b;
+}
+
+.datoModal p {
+    margin-top: 6px;
+    color: #4b5968;
+}
+
+.enlaceOficial {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 18px;
+    border-radius: 6px;
+    background: #10233b;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 180ms ease;
+}
+
+.enlaceOficial:hover {
+    background: #c6a45c;
+    color: #10233b;
+}
+
+.enlacePendiente {
+    color: #697586;
+    font-size: 0.9rem;
 }
 
 .marcaAliado {
@@ -247,26 +376,44 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 76px;
-    margin-bottom: 12px;
-    background: transparent;
+    height: 112px;
+    margin-bottom: 18px;
+    padding: 14px;
+    overflow: hidden;
+    border: 1px solid #e8edf2;
+    border-radius: 8px;
+    background: #f7f9fb;
 }
 
+/* Logotipos de instituciones y organizaciones */
 .logoAliado {
     display: block;
     width: 100%;
-    max-width: 145px;
-    height: 68px;
+    max-width: 165px;
+    height: 82px;
     object-fit: contain;
+    transition: transform 220ms ease;
 }
 
+/* Retratos de personas */
 .fotoAliado {
     display: block;
-    width: 68px;
-    height: 68px;
-    border: 2px solid #e5edf4;
+    width: 88px;
+    height: 88px;
+    border: 3px solid #fff;
     border-radius: 50%;
     object-fit: cover;
+    box-shadow: 0 0 0 1px #dce5ed;
+    transition: transform 220ms ease;
+}
+
+/* Efecto sutil al pasar el cursor */
+.tarjetaAliado:hover .logoAliado {
+    transform: scale(1.05);
+}
+
+.tarjetaAliado:hover .fotoAliado {
+    transform: scale(1.04);
 }
 
 .datosAliado {
@@ -544,6 +691,48 @@
         white-space: normal;
         font-size: 0.8rem;
     }
+
+    .marcaAliado {
+        height: 105px;
+        margin-bottom: 14px;
+    }
+
+    .logoAliado {
+        max-width: 145px;
+        height: 76px;
+    }
+
+    .fotoAliado {
+        width: 80px;
+        height: 80px;
+    }
+
+    .fondoModal {
+        padding: 14px;
+    }
+
+    .modalAliado {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 26px 22px;
+    }
+
+    .imagenModal {
+        min-height: 130px;
+    }
+
+    .logoModal {
+        height: 110px;
+    }
+
+    .fotoModal {
+        width: 120px;
+        height: 120px;
+    }
+
+    .contenidoModal h2 {
+        font-size: 1.4rem;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -554,6 +743,11 @@
     .tarjetaAliado,
     .botonAliados,
     .botonAccion {
+        transition: none;
+    }
+
+    .logoAliado,
+    .fotoAliado {
         transition: none;
     }
 }
