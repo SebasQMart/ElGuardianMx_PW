@@ -1,15 +1,19 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navigation() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const pathname = usePathname();
 
     useEffect(() => {
         if (!mobileMenuOpen) return;
 
         const overflowAnterior = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
 
         return () => {
             document.body.style.overflow = overflowAnterior;
@@ -18,10 +22,15 @@ export default function Navigation() {
 
     return (
         <header className="site-header">
-            <a className="brand" href="#" aria-label="El Guardián MX, inicio">
+            <Link
+                className="brand"
+                href="/"
+                aria-label="El Guardián MX, inicio"
+                onClick={() => setMobileMenuOpen(false)}
+            >
                 <span className="brand-mark">G</span>
                 <span>El Guardián MX</span>
-            </a>
+            </Link>
 
             <button
                 className="mobile-menu-toggle"
@@ -39,14 +48,36 @@ export default function Navigation() {
                 className={`header-menu ${mobileMenuOpen ? "is-open" : ""}`}
             >
                 <nav className="main-nav" aria-label="Navegación principal">
-                    <a className="active" href="" onClick={() => setMobileMenuOpen(false)}>Inicio</a>
-                    <a href="conocenos" onClick={() => setMobileMenuOpen(false)}>Conócenos</a>
+                    <Link
+                        className={pathname === "/" ? "active" : ""}
+                        href="/"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Inicio
+                    </Link>
+
+                    <Link
+                        className={pathname === "/conocenos" ? "active" : ""}
+                        href="/conocenos"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Conócenos
+                    </Link>
+
                     <a href="#aprende" onClick={() => setMobileMenuOpen(false)}>Aprende</a>
                     <a href="#datos" onClick={() => setMobileMenuOpen(false)}>Datos</a>
                     <a href="#audiencias" onClick={() => setMobileMenuOpen(false)}>Audiencias</a>
                     <a href="#procesos" onClick={() => setMobileMenuOpen(false)}>Procesos</a>
                     <a href="#presupuesto" onClick={() => setMobileMenuOpen(false)}>Presupuesto</a>
-                    <a href="publicaciones" onClick={() => setMobileMenuOpen(false)}>Publicaciones</a>
+
+                    <Link
+                        className={pathname === "/publicaciones" ? "active" : ""}
+                        href="/publicaciones"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Publicaciones
+                    </Link>
+
                     <a href="#transparencia" onClick={() => setMobileMenuOpen(false)}>Transparencia</a>
                     <a href="#participa" onClick={() => setMobileMenuOpen(false)}>Participa</a>
                 </nav>
