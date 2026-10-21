@@ -40,7 +40,7 @@ export default function Navigation() {
             >
                 <nav className="main-nav" aria-label="Navegación principal">
                     <a className="active" href="" onClick={() => setMobileMenuOpen(false)}>Inicio</a>
-                    <a href="#conocenos" onClick={() => setMobileMenuOpen(false)}>Conócenos</a>
+                    <a href="conocenos" onClick={() => setMobileMenuOpen(false)}>Conócenos</a>
                     <a href="#aprende" onClick={() => setMobileMenuOpen(false)}>Aprende</a>
                     <a href="#datos" onClick={() => setMobileMenuOpen(false)}>Datos</a>
                     <a href="#audiencias" onClick={() => setMobileMenuOpen(false)}>Audiencias</a>
