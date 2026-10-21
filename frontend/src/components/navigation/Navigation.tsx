@@ -65,7 +65,15 @@ export default function Navigation() {
                     </Link>
 
                     <a href="#aprende" onClick={() => setMobileMenuOpen(false)}>Aprende</a>
-                    <a href="#datos" onClick={() => setMobileMenuOpen(false)}>Datos</a>
+
+                    <Link
+                        className={pathname === "/datos" ? "active" : ""}
+                        href="/datos"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Datos
+                    </Link>
+                    
                     <a href="#audiencias" onClick={() => setMobileMenuOpen(false)}>Audiencias</a>
                     <a href="#procesos" onClick={() => setMobileMenuOpen(false)}>Procesos</a>
                     <a href="#presupuesto" onClick={() => setMobileMenuOpen(false)}>Presupuesto</a>
