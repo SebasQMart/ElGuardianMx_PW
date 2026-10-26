@@ -64,7 +64,7 @@ export default function Navigation() {
                         Conócenos
                     </Link>
 
-                    <a href="#aprende" onClick={() => setMobileMenuOpen(false)}>Aprende</a>
+                    {/* <a href="#aprende" onClick={() => setMobileMenuOpen(false)}>Aprende</a> */}
 
                     <Link
                         className={pathname === "/datos" ? "active" : ""}
@@ -74,9 +74,16 @@ export default function Navigation() {
                         Datos
                     </Link>
                     
-                    <a href="#audiencias" onClick={() => setMobileMenuOpen(false)}>Audiencias</a>
-                    <a href="#procesos" onClick={() => setMobileMenuOpen(false)}>Procesos</a>
-                    <a href="#presupuesto" onClick={() => setMobileMenuOpen(false)}>Presupuesto</a>
+                    <Link
+                        className={pathname === "/audiencias" ? "active" : ""}
+                        href="/audiencias"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Audiencias
+                    </Link>
+
+                    {/* <a href="#procesos" onClick={() => setMobileMenuOpen(false)}>Procesos</a> */}
+                    {/* <a href="#presupuesto" onClick={() => setMobileMenuOpen(false)}>Presupuesto</a> */}
 
                     <Link
                         className={pathname === "/publicaciones" ? "active" : ""}
@@ -86,8 +93,8 @@ export default function Navigation() {
                         Publicaciones
                     </Link>
 
-                    <a href="#transparencia" onClick={() => setMobileMenuOpen(false)}>Transparencia</a>
-                    <a href="#participa" onClick={() => setMobileMenuOpen(false)}>Participa</a>
+                    {/* <a href="#transparencia" onClick={() => setMobileMenuOpen(false)}>Transparencia</a> */}
+                    {/* <a href="#participa" onClick={() => setMobileMenuOpen(false)}>Participa</a> */}
                 </nav>
 
                 <div className="header-socials" aria-label="Redes sociales oficiales">

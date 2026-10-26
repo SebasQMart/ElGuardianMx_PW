@@ -1,0 +1,250 @@
+.paginaLogin {
+    --azul: #10233b;
+    --azul-claro: #1b3656;
+    --dorado: #c6a45c;
+    --texto: #263547;
+    --texto-secundario: #647386;
+    --borde: #dce5ed;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background:
+        radial-gradient(circle at 10% 15%,
+            rgb(198 164 92 / 12%),
+            transparent 32%),
+        radial-gradient(circle at 90% 85%,
+            rgb(27 54 86 / 10%),
+            transparent 35%),
+        #f3f6f9;
+}
+
+.contenedorLogin {
+    width: 100%;
+    max-width: 460px;
+}
+
+.encabezado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--azul);
+    text-decoration: none;
+}
+
+.logo {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border: 2px solid var(--dorado);
+    border-radius: 10px;
+    background: var(--azul);
+    color: #fff;
+    font-family: Georgia, serif;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.nombreMarca {
+    font-size: 1.45rem;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+.etiqueta {
+    color: #8b7139;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 2.4px;
+    text-align: center;
+}
+
+.tarjetaLogin {
+    padding: 38px;
+    border: 1px solid var(--borde);
+    border-top: 4px solid var(--dorado);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 18px 55px rgb(16 35 59 / 9%);
+}
+
+.iconoAcceso {
+    display: grid;
+    width: 56px;
+    height: 56px;
+    place-items: center;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #edf2f7;
+    color: var(--azul);
+}
+
+.iconoAcceso svg {
+    width: 27px;
+    height: 27px;
+}
+
+.tarjetaLogin h1 {
+    margin: 0;
+    color: var(--azul);
+    font-size: 1.8rem;
+    font-weight: 750;
+    text-align: center;
+    letter-spacing: -0.6px;
+}
+
+.descripcion {
+    margin: 12px 0 30px;
+    color: var(--texto-secundario);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.campo label {
+    color: var(--texto);
+    font-size: 0.9rem;
+    font-weight: 650;
+}
+
+.campo input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid #ccd6e0;
+    border-radius: 7px;
+    outline: none;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+    font-size: 0.92rem;
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.campo input::placeholder {
+    color: #9aa6b4;
+}
+
+.campo input:focus {
+    border-color: var(--dorado);
+    box-shadow: 0 0 0 3px rgb(198 164 92 / 17%);
+}
+
+.botonIngresar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 49px;
+    margin-top: 4px;
+    border: 1px solid var(--azul);
+    border-radius: 7px;
+    background: var(--azul);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
+}
+
+.botonIngresar:hover {
+    border-color: var(--dorado);
+    background: var(--dorado);
+    color: var(--azul);
+}
+
+.botonIngresar:focus-visible,
+.marca:focus-visible {
+    outline: 3px solid var(--dorado);
+    outline-offset: 4px;
+}
+
+.aviso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    margin: 28px 0 0;
+    color: var(--texto-secundario);
+    font-size: 0.76rem;
+    text-align: center;
+}
+
+.aviso span {
+    color: #b08e43;
+    font-size: 0.65rem;
+}
+
+.pie {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 26px;
+    color: var(--texto-secundario);
+    font-size: 0.76rem;
+    text-align: center;
+}
+
+.pie span:first-child {
+    color: var(--azul);
+    font-weight: 700;
+}
+
+@media (max-width: 480px) {
+    .paginaLogin {
+        padding: 28px 16px;
+    }
+
+    .nombreMarca {
+        font-size: 1.25rem;
+    }
+
+    .tarjetaLogin {
+        padding: 28px 22px;
+    }
+
+    .tarjetaLogin h1 {
+        font-size: 1.6rem;
+    }
+
+    .etiqueta {
+        font-size: 0.65rem;
+        letter-spacing: 1.8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .campo input,
+    .botonIngresar {
+        transition: none;
+    }
+}
