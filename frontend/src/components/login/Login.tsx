@@ -1,7 +1,64 @@
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./Login.module.css";
 
+const API_URL =
+    process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
 export default function Login() {
+    const router = useRouter();
+
+    const [correo, setCorreo] = useState("");
+    const [contrasena, setContrasena] = useState("");
+    const [error, setError] = useState("");
+    const [cargando, setCargando] = useState(false);
+
+    async function manejarLogin(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        setError("");
+        setCargando(true);
+
+        try {
+            const respuesta = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    email: correo,
+                    password: contrasena,
+                }),
+            });
+
+            const datos = await respuesta.json();
+
+            if (!respuesta.ok) {
+                setError(
+                    respuesta.status === 401
+                        ? "Correo o contraseña incorrectos."
+                        : datos.message || "No fue posible iniciar sesión.",
+                );
+                return;
+            }
+
+            setContrasena("");
+
+            router.replace("/admin/dashboard");
+            router.refresh();
+        } catch {
+            setError(
+                "No fue posible conectar con el servidor. Intenta nuevamente.",
+            );
+        } finally {
+            setCargando(false);
+        }
+    }
+
     return (
         <main className={styles.paginaLogin}>
             <section className={styles.contenedorLogin}>
@@ -52,18 +109,27 @@ export default function Login() {
                         panel de administración.
                     </p>
 
-                    <form className={styles.formulario}>
+                    <form
+                        className={styles.formulario}
+                        onSubmit={manejarLogin}
+                    >
                         <div className={styles.campo}>
                             <label htmlFor="correo">
                                 Correo electrónico
                             </label>
+
                             <input
                                 id="correo"
                                 name="correo"
                                 type="email"
                                 placeholder="admin@elguardianmx.mx"
                                 autoComplete="username"
+                                value={correo}
+                                onChange={(event) =>
+                                    setCorreo(event.target.value)
+                                }
                                 required
+                                disabled={cargando}
                             />
                         </div>
 
@@ -71,22 +137,37 @@ export default function Login() {
                             <label htmlFor="contrasena">
                                 Contraseña
                             </label>
+
                             <input
                                 id="contrasena"
                                 name="contrasena"
                                 type="password"
                                 placeholder="Ingresa tu contraseña"
                                 autoComplete="current-password"
+                                value={contrasena}
+                                onChange={(event) =>
+                                    setContrasena(event.target.value)
+                                }
                                 required
+                                disabled={cargando}
                             />
                         </div>
+
+                        {error && (
+                            <p role="alert" aria-live="polite">
+                                {error}
+                            </p>
+                        )}
 
                         <button
                             type="submit"
                             className={styles.botonIngresar}
+                            disabled={cargando}
                         >
-                            Ingresar
-                            <span aria-hidden="true"> →</span>
+                            {cargando ? "Verificando..." : "Ingresar"}
+                            {!cargando && (
+                                <span aria-hidden="true"> →</span>
+                            )}
                         </button>
                     </form>
 

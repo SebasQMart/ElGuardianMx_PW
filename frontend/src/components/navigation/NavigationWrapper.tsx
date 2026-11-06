@@ -7,7 +7,10 @@ import Navigation from "./Navigation";
 export default function NavigationWrapper() {
     const pathname = usePathname();
 
-    if (pathname === "/login") {
+    const esRutaAdministrativa =
+        pathname === "/login" || pathname.startsWith("/admin");
+
+    if (esRutaAdministrativa) {
         return null;
     }
 

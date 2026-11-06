@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EstadoPublicacion {
+  BORRADOR
+  PUBLICADA
+  ARCHIVADA
+
+  @@map("estado_publicacion")
+}
+
 model Admin {
   id           String         @id @default(uuid())
   email        String         @unique
@@ -30,4 +38,26 @@ model AdminSession {
   @@index([adminId])
   @@index([expiresAt])
   @@map("admin_sessions")
+}
+
+model Publicacion {
+  id        String            @id @default(uuid())
+  slug      String            @unique
+  titulo    String
+  resumen   String?
+  contenido Json              @default("{}")
+  tipo      String?
+  categoria String?
+  fecha     DateTime?
+  imagen    String?
+  lectura   Int               @default(1)
+  demo      Boolean           @default(false)
+  estado    EstadoPublicacion @default(BORRADOR)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([estado])
+  @@index([fecha])
+  @@index([categoria])
+  @@map("publicaciones")
 }
