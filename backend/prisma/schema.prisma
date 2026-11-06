@@ -61,3 +61,27 @@ model Publicacion {
   @@index([categoria])
   @@map("publicaciones")
 }
+
+enum TipoAliado {
+  PERSONA
+  ORGANIZACION
+
+  @@map("tipo_aliado")
+}
+
+model Aliado {
+  id           String     @id @default(uuid())
+  nombre       String
+  descripcion  String
+  imagen       String?
+  ubicacion    String?
+  tipo         TipoAliado
+  sitioOficial String?
+  activo       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([activo])
+  @@index([tipo])
+  @@map("aliados")
+}
