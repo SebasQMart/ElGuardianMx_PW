@@ -6,13 +6,52 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateAudienciaDto } from './dto/create-audiencia.dto';
 import { UpdateAudienciaDto } from './dto/update-audiencia.dto';
 
+interface FiltrosAudiencia {
+  fecha?: string;
+  tipo?: string;
+  juzgado?: string;
+  estado?: string;
+}
+
 @Injectable()
 export class AudienciasService {
   constructor(private readonly prisma: PrismaService) {}
 
   // Consultar todas las audiencias para el público.
-  async findAllPublic() {
-    const audiencias = await this.prisma.audiencia.findMany();
+  async findAllPublic(filtros: FiltrosAudiencia) {
+    const where: Prisma.AudienciaWhereInput = {};
+
+    if (filtros.tipo) {
+      where.tipo = {
+        contains: filtros.tipo,
+        mode: 'insensitive',
+      };
+    }
+
+    if (filtros.juzgado) {
+      where.juzgado = {
+        contains: filtros.juzgado,
+        mode: 'insensitive',
+      };
+    }
+
+    if (filtros.estado) {
+      where.estado = filtros.estado as EstadoAudiencia;
+    }
+
+    if (filtros.fecha) {
+      const inicio = new Date(`${filtros.fecha}T00:00:00.000Z`);
+      const fin = new Date(`${filtros.fecha}T23:59:59.999Z`);
+
+      where.fechaHora = {
+        gte: inicio,
+        lte: fin,
+      };
+    }
+
+    const audiencias = await this.prisma.audiencia.findMany({
+      where,
+    });
 
     const ahora = new Date();
 
@@ -22,14 +61,10 @@ export class AudienciasService {
       const esFuturaA = fechaA >= ahora.getTime();
       const esFuturaB = fechaB >= ahora.getTime();
 
-      // Las próximas audiencias aparecen primero.
       if (esFuturaA && !esFuturaB) return -1;
       if (!esFuturaA && esFuturaB) return 1;
-
-      // Las próximas se ordenan de la más cercana a la más lejana.
       if (esFuturaA && esFuturaB) return fechaA - fechaB;
 
-      // Las pasadas se ordenan de la más reciente a la más antigua.
       return fechaB - fechaA;
     });
   }

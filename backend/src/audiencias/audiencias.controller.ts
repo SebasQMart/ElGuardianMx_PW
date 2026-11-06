@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -18,9 +19,7 @@ import { UpdateAudienciaDto } from './dto/update-audiencia.dto';
 
 @Controller('audiencias')
 export class AudienciasController {
-  constructor(
-    private readonly audienciasService: AudienciasService,
-  ) {}
+  constructor(private readonly audienciasService: AudienciasService) {}
 
   // RUTA ADMINISTRATIVA: consultar todas las audiencias.
   @UseGuards(AuthGuard)
@@ -31,8 +30,18 @@ export class AudienciasController {
 
   // RUTA PÚBLICA: consultar todas las audiencias.
   @Get()
-  findAllPublic() {
-    return this.audienciasService.findAllPublic();
+  findAllPublic(
+    @Query('fecha') fecha?: string,
+    @Query('tipo') tipo?: string,
+    @Query('juzgado') juzgado?: string,
+    @Query('estado') estado?: string,
+  ) {
+    return this.audienciasService.findAllPublic({
+      fecha,
+      tipo,
+      juzgado,
+      estado,
+    });
   }
 
   // RUTA PÚBLICA: consultar una audiencia por ID.
