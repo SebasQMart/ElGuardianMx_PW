@@ -85,3 +85,32 @@ model Aliado {
   @@index([tipo])
   @@map("aliados")
 }
+
+enum EstadoAudiencia {
+  PROGRAMADA
+  EN_PROCESO
+  CELEBRADA
+  REPROGRAMADA
+  CANCELADA
+
+  @@map("estado_audiencia")
+}
+
+model Audiencia {
+  id          String          @id @default(uuid())
+  titulo      String
+  descripcion String?
+  fechaHora   DateTime
+  tipo        String
+  juzgado     String
+  estado      EstadoAudiencia @default(PROGRAMADA)
+  ubicacion   String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([fechaHora])
+  @@index([tipo])
+  @@index([juzgado])
+  @@index([estado])
+  @@map("audiencias")
+}
