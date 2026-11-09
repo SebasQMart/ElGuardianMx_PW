@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Publicacion } from "@/lib/publicaciones";
+import AlertaEliminacion from "@/components/ui/AlertaEliminacion";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -18,6 +19,15 @@ export default function AdminPublicaciones() {
   const [mensaje, setMensaje] = useState("");
   const [errorFormulario, setErrorFormulario] = useState("");
 
+  const [publicacionPorEliminar, setPublicacionPorEliminar] =
+    useState<Publicacion | null>(null);
+
+  const [eliminando, setEliminando] = useState(false);
+
+  const [publicacionEditando, setPublicacionEditando] = useState<string | null>(
+    null,
+  );
+
   const [formulario, setFormulario] = useState({
     titulo: "",
     slug: "",
@@ -31,6 +41,83 @@ export default function AdminPublicaciones() {
     demo: false,
     estado: "BORRADOR" as "BORRADOR" | "PUBLICADA" | "ARCHIVADA",
   });
+
+  function editarPublicacion(publicacion: Publicacion) {
+    setPublicacionEditando(publicacion.id);
+
+    setFormulario({
+      titulo: publicacion.titulo,
+      slug: publicacion.slug,
+      resumen: publicacion.resumen ?? "",
+      contenido: JSON.stringify(publicacion.contenido, null, 2),
+      tipo: publicacion.tipo ?? "",
+      categoria: publicacion.categoria ?? "",
+      fecha: publicacion.fecha ? publicacion.fecha.substring(0, 10) : "",
+      imagen: publicacion.imagen ?? "",
+      lectura: publicacion.lectura,
+      demo: publicacion.demo,
+      estado: publicacion.estado,
+    });
+
+    setErrorFormulario("");
+    setMensaje("");
+    setMostrarFormulario(true);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
+  async function eliminarPublicacion() {
+    if (!publicacionPorEliminar) {
+      return;
+    }
+
+    setEliminando(true);
+    setMensaje("");
+    setErrorFormulario("");
+
+    try {
+      const respuesta = await fetch(
+        `${API_URL}/publicaciones/${publicacionPorEliminar.id}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      if (respuesta.status === 401) {
+        router.replace("/login");
+        return;
+      }
+
+      if (!respuesta.ok) {
+        const datosError = await respuesta.json().catch(() => null);
+
+        throw new Error(
+          datosError?.message || "No fue posible eliminar la publicación.",
+        );
+      }
+
+      setPublicaciones((actuales) =>
+        actuales.filter((item) => item.id !== publicacionPorEliminar.id),
+      );
+
+      setMensaje("La publicación se eliminó correctamente.");
+      setPublicacionPorEliminar(null);
+    } catch (error) {
+      setErrorFormulario(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error al eliminar la publicación.",
+      );
+
+      setPublicacionPorEliminar(null);
+    } finally {
+      setEliminando(false);
+    }
+  }
 
   async function guardarPublicacion(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,8 +145,14 @@ export default function AdminPublicaciones() {
         throw new Error("El contenido debe ser un objeto JSON válido.");
       }
 
-      const respuesta = await fetch(`${API_URL}/publicaciones`, {
-        method: "POST",
+      const esEdicion = publicacionEditando !== null;
+
+      const url = esEdicion
+        ? `${API_URL}/publicaciones/${publicacionEditando}`
+        : `${API_URL}/publicaciones`;
+
+      const respuesta = await fetch(url, {
+        method: esEdicion ? "PATCH" : "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -95,10 +188,25 @@ export default function AdminPublicaciones() {
         );
       }
 
-      const nuevaPublicacion: Publicacion = await respuesta.json();
+      const publicacionGuardada: Publicacion = await respuesta.json();
 
-      setPublicaciones((actuales) => [nuevaPublicacion, ...actuales]);
-      setMensaje("La publicación se registró correctamente.");
+      setPublicaciones((actuales) =>
+        esEdicion
+          ? actuales.map((publicacion) =>
+              publicacion.id === publicacionEditando
+                ? publicacionGuardada
+                : publicacion,
+            )
+          : [publicacionGuardada, ...actuales],
+      );
+
+      setMensaje(
+        esEdicion
+          ? "La publicación se actualizó correctamente."
+          : "La publicación se registró correctamente.",
+      );
+
+      setPublicacionEditando(null);
 
       setFormulario({
         titulo: "",
@@ -216,7 +324,9 @@ export default function AdminPublicaciones() {
               onSubmit={guardarPublicacion}
             >
               <h2 className="text-xl font-bold text-slate-900">
-                Nueva publicación
+                {publicacionEditando
+                  ? "Editar publicación"
+                  : "Nueva publicación"}
               </h2>
 
               <div>
@@ -423,12 +533,35 @@ export default function AdminPublicaciones() {
                   disabled={guardando}
                   className="rounded-lg bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
                 >
-                  {guardando ? "Guardando..." : "Guardar publicación"}
+                  {guardando
+                    ? "Guardando..."
+                    : publicacionEditando
+                      ? "Guardar cambios"
+                      : "Guardar publicación"}
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setMostrarFormulario(false)}
+                  onClick={() => {
+                    setMostrarFormulario(false);
+                    setPublicacionEditando(null);
+                    setErrorFormulario("");
+                    setMensaje("");
+
+                    setFormulario({
+                      titulo: "",
+                      slug: "",
+                      resumen: "",
+                      contenido: '{\n  "secciones": []\n}',
+                      tipo: "",
+                      categoria: "",
+                      fecha: "",
+                      imagen: "",
+                      lectura: 5,
+                      demo: false,
+                      estado: "BORRADOR",
+                    });
+                  }}
                   className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-700 hover:bg-white"
                 >
                   Cancelar
@@ -517,12 +650,45 @@ export default function AdminPublicaciones() {
                         )
                       : "Sin fecha"}
                   </p>
+
+                  <div className="mt-4 flex flex-wrap justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => editarPublicacion(publicacion)}
+                      className="rounded-lg border border-amber-500 px-4 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPublicacionPorEliminar(publicacion)}
+                      className="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>
           )}
         </section>
       )}
+
+      <AlertaEliminacion
+        abierto={publicacionPorEliminar !== null}
+        titulo="Eliminar publicación"
+        mensaje={
+          publicacionPorEliminar
+            ? `¿Estás seguro de que deseas eliminar "${publicacionPorEliminar.titulo}"? Esta acción no se puede deshacer.`
+            : ""
+        }
+        textoCancelar="Cancelar"
+        textoConfirmar="Eliminar"
+        cargando={eliminando}
+        onCancelar={() => setPublicacionPorEliminar(null)}
+        onConfirmar={eliminarPublicacion}
+      />
     </main>
   );
 }

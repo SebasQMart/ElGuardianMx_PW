@@ -110,7 +110,7 @@ export default function AdminDashboard() {
             <aside className="flex w-full flex-col bg-slate-950 p-6 text-white md:min-h-screen md:w-72">
                 <div className="mb-10">
                     <p className="text-2xl font-bold tracking-wide">
-                        El Guardián <span className="text-amber-400">MX</span>
+                        Observatorio <span className="text-amber-400">de justicia morelos</span>
                     </p>
                     <p className="mt-2 text-xs uppercase tracking-[0.2em] text-slate-400">
                         Panel administrativo
