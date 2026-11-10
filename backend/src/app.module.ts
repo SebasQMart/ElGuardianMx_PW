@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { PublicacionesModule } from './publicaciones/publicaciones.module';
 import { AliadosModule } from './aliados/aliados.module';
 import { AudienciasModule } from './audiencias/audiencias.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AudienciasModule } from './audiencias/audiencias.module';
     PublicacionesModule,
     AliadosModule,
     AudienciasModule,
+    CloudinaryModule,
   ],
 })
 export class AppModule {}
