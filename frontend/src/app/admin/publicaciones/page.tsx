@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Publicacion } from "@/lib/publicaciones";
 import AlertaEliminacion from "@/components/ui/AlertaEliminacion";
+import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -18,6 +19,10 @@ export default function AdminPublicaciones() {
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [errorFormulario, setErrorFormulario] = useState("");
+  const [imagenSeleccionada, setImagenSeleccionada] = useState<File | null>(
+    null,
+  );
+  const [vistaPreviaImagen, setVistaPreviaImagen] = useState("");
 
   const [publicacionPorEliminar, setPublicacionPorEliminar] =
     useState<Publicacion | null>(null);
@@ -37,6 +42,7 @@ export default function AdminPublicaciones() {
     categoria: "",
     fecha: "",
     imagen: "",
+    imagenPublicId: "",
     lectura: 5,
     demo: false,
     estado: "BORRADOR" as "BORRADOR" | "PUBLICADA" | "ARCHIVADA",
@@ -54,6 +60,7 @@ export default function AdminPublicaciones() {
       categoria: publicacion.categoria ?? "",
       fecha: publicacion.fecha ? publicacion.fecha.substring(0, 10) : "",
       imagen: publicacion.imagen ?? "",
+      imagenPublicId: publicacion.imagenPublicId ?? "",
       lectura: publicacion.lectura,
       demo: publicacion.demo,
       estado: publicacion.estado,
@@ -67,6 +74,72 @@ export default function AdminPublicaciones() {
       top: 0,
       behavior: "smooth",
     });
+  }
+
+  function seleccionarImagen(archivo: File | null) {
+    if (!archivo) {
+      setImagenSeleccionada(null);
+      setVistaPreviaImagen("");
+      return;
+    }
+
+    const formatosPermitidos = ["image/jpeg", "image/png"];
+
+    if (!formatosPermitidos.includes(archivo.type)) {
+      setErrorFormulario("Selecciona una imagen en formato JPG, JPEG o PNG.");
+      return;
+    }
+
+    if (archivo.size > 5 * 1024 * 1024) {
+      setErrorFormulario("La imagen no debe superar los 5 MB.");
+      return;
+    }
+
+    setErrorFormulario("");
+    setImagenSeleccionada(archivo);
+
+    const lector = new FileReader();
+
+    lector.onload = () => {
+      if (typeof lector.result === "string") {
+        setVistaPreviaImagen(lector.result);
+      }
+    };
+
+    lector.readAsDataURL(archivo);
+  }
+
+  async function subirImagenCloudinary(
+    archivo: File,
+  ): Promise<{ url: string; publicId: string }> {
+    const datos = new FormData();
+
+    datos.append("imagen", archivo);
+
+    const respuesta = await fetch(`${API_URL}/cloudinary/imagen`, {
+      method: "POST",
+      credentials: "include",
+      body: datos,
+    });
+
+    if (respuesta.status === 401) {
+      router.replace("/login");
+      throw new Error("Tu sesión ha expirado. Inicia sesión nuevamente.");
+    }
+
+    if (!respuesta.ok) {
+      const datosError = await respuesta.json().catch(() => null);
+
+      const mensajeError = Array.isArray(datosError?.message)
+        ? datosError.message.join(", ")
+        : datosError?.message;
+
+      throw new Error(
+        mensajeError || "No fue posible subir la imagen a Cloudinary.",
+      );
+    }
+
+    return respuesta.json();
   }
 
   async function eliminarPublicacion() {
@@ -151,6 +224,16 @@ export default function AdminPublicaciones() {
         ? `${API_URL}/publicaciones/${publicacionEditando}`
         : `${API_URL}/publicaciones`;
 
+      let imagen = formulario.imagen.trim() || undefined;
+      let imagenPublicId = formulario.imagenPublicId.trim() || undefined;
+
+      if (imagenSeleccionada) {
+        const imagenSubida = await subirImagenCloudinary(imagenSeleccionada);
+
+        imagen = imagenSubida.url;
+        imagenPublicId = imagenSubida.publicId;
+      }
+
       const respuesta = await fetch(url, {
         method: esEdicion ? "PATCH" : "POST",
         credentials: "include",
@@ -165,7 +248,8 @@ export default function AdminPublicaciones() {
           tipo: formulario.tipo.trim() || undefined,
           categoria: formulario.categoria.trim() || undefined,
           fecha: formulario.fecha || undefined,
-          imagen: formulario.imagen.trim() || undefined,
+          imagen,
+          imagenPublicId,
           lectura: formulario.lectura,
           demo: formulario.demo,
           estado: formulario.estado,
@@ -217,10 +301,14 @@ export default function AdminPublicaciones() {
         categoria: "",
         fecha: "",
         imagen: "",
+        imagenPublicId: "",
         lectura: 5,
         demo: false,
         estado: "BORRADOR",
       });
+
+      setImagenSeleccionada(null);
+      setVistaPreviaImagen("");
     } catch (error) {
       setErrorFormulario(
         error instanceof Error
@@ -465,9 +553,42 @@ export default function AdminPublicaciones() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  URL de imagen
-                </label>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Imagen de la publicación
+                  </label>
+
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                    onChange={(e) =>
+                      seleccionarImagen(e.target.files?.[0] ?? null)
+                    }
+                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
+                  />
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    Formatos permitidos: JPG, JPEG y PNG. Máximo 5 MB.
+                  </p>
+
+                  {vistaPreviaImagen && (
+                    <div className="mt-4">
+                      <p className="mb-2 text-sm font-medium text-slate-700">
+                        Vista previa
+                      </p>
+
+                      <Image
+                        src={vistaPreviaImagen}
+                        alt="Vista previa de la publicación"
+                        width={800}
+                        height={450}
+                        unoptimized
+                        className="h-48 w-full rounded-lg border border-slate-200 object-contain bg-slate-50"
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <input
                   type="url"
                   maxLength={1000}
@@ -557,10 +678,14 @@ export default function AdminPublicaciones() {
                       categoria: "",
                       fecha: "",
                       imagen: "",
+                      imagenPublicId: "",
                       lectura: 5,
                       demo: false,
                       estado: "BORRADOR",
                     });
+
+                    setImagenSeleccionada(null);
+                    setVistaPreviaImagen("");
                   }}
                   className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-slate-700 hover:bg-white"
                 >

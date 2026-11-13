@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   NotFoundException,
@@ -10,10 +9,14 @@ import { PrismaService } from '../prisma/prisma.service';
 
 import { CreatePublicacionDto } from './dto/create-publicacion.dto';
 import { UpdatePublicacionDto } from './dto/update-publicacion.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class PublicacionesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   // Consultar publicaciones visibles para el público.
   async findPublicadas() {
@@ -71,9 +74,7 @@ export class PublicacionesService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new ConflictException(
-          'Ya existe una publicación con ese slug',
-        );
+        throw new ConflictException('Ya existe una publicación con ese slug');
       }
 
       throw error;
@@ -103,18 +104,34 @@ export class PublicacionesService {
         }),
       };
 
-      return await this.prisma.publicacion.update({
+      const actualizada = await this.prisma.publicacion.update({
         where: { id },
         data,
       });
+
+      // Eliminar la imagen anterior si fue sustituida.
+      if (
+        existente.imagenPublicId &&
+        dto.imagenPublicId !== undefined &&
+        dto.imagenPublicId !== existente.imagenPublicId
+      ) {
+        try {
+          await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
+        } catch (error) {
+          console.error(
+            'No fue posible eliminar la imagen anterior de Cloudinary:',
+            error,
+          );
+        }
+      }
+
+      return actualizada;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        throw new ConflictException(
-          'Ya existe otra publicación con ese slug',
-        );
+        throw new ConflictException('Ya existe otra publicación con ese slug');
       }
 
       throw error;
@@ -134,6 +151,18 @@ export class PublicacionesService {
     await this.prisma.publicacion.delete({
       where: { id },
     });
+
+    // Eliminar la imagen asociada de Cloudinary.
+    if (existente.imagenPublicId) {
+      try {
+        await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
+      } catch (error) {
+        console.error(
+          'No fue posible eliminar la imagen de Cloudinary:',
+          error,
+        );
+      }
+    }
 
     return {
       message: 'Publicación eliminada correctamente',

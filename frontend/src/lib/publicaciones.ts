@@ -11,6 +11,7 @@ export type Publicacion = {
     categoria: string | null;
     fecha: string | null;
     imagen: string | null;
+    imagenPublicId: string | null;
     lectura: number;
     demo: boolean;
     estado: "BORRADOR" | "PUBLICADA" | "ARCHIVADA";

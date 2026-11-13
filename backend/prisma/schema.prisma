@@ -50,6 +50,7 @@ model Publicacion {
   categoria String?
   fecha     DateTime?
   imagen    String?
+  imagenPublicId String?
   lectura   Int               @default(1)
   demo      Boolean           @default(false)
   estado    EstadoPublicacion @default(BORRADOR)

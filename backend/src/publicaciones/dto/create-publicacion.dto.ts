@@ -1,4 +1,3 @@
-
 import {
   IsBoolean,
   IsDateString,
@@ -53,6 +52,11 @@ export class CreatePublicacionDto {
   @MaxLength(1000)
   @IsUrl({ require_protocol: true })
   imagen?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  imagenPublicId?: string;
 
   @IsOptional()
   @IsInt()
