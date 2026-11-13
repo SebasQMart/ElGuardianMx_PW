@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import type { Publicacion } from "@/lib/publicaciones";
 import AlertaEliminacion from "@/components/ui/AlertaEliminacion";
 import Image from "next/image";
+import type { JSONContent } from "@tiptap/core";
+import EditorContenido from "@/components/admin/EditorContenido";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -42,6 +44,7 @@ export default function AdminPublicaciones() {
     null,
   );
   const [vistaPreviaImagen, setVistaPreviaImagen] = useState("");
+  const [imagenEliminada, setImagenEliminada] = useState(false);
 
   const [publicacionPorEliminar, setPublicacionPorEliminar] =
     useState<Publicacion | null>(null);
@@ -58,7 +61,10 @@ export default function AdminPublicaciones() {
     titulo: "",
     slug: "",
     resumen: "",
-    contenido: '{\n  "secciones": []\n}',
+    contenido: {
+      type: "doc",
+      content: [{ type: "paragraph" }],
+    } as JSONContent,
     tipo: "",
     categoria: "",
     fecha: "",
@@ -71,12 +77,24 @@ export default function AdminPublicaciones() {
 
   function editarPublicacion(publicacion: Publicacion) {
     setPublicacionEditando(publicacion.id);
+    setImagenSeleccionada(null);
+    setVistaPreviaImagen(publicacion.imagen ?? "");
+    setImagenEliminada(false);
 
     setFormulario({
       titulo: publicacion.titulo,
       slug: publicacion.slug,
       resumen: publicacion.resumen ?? "",
-      contenido: JSON.stringify(publicacion.contenido, null, 2),
+      contenido:
+        publicacion.contenido &&
+        typeof publicacion.contenido === "object" &&
+        "type" in publicacion.contenido &&
+        publicacion.contenido.type === "doc"
+          ? (publicacion.contenido as JSONContent)
+          : {
+              type: "doc",
+              content: [{ type: "paragraph" }],
+            },
       tipo: publicacion.tipo ?? "",
       categoria: publicacion.categoria ?? "",
       fecha: publicacion.fecha ? publicacion.fecha.substring(0, 10) : "",
@@ -119,6 +137,7 @@ export default function AdminPublicaciones() {
 
     setErrorFormulario("");
     setImagenSeleccionada(archivo);
+    setImagenEliminada(false);
 
     const lector = new FileReader();
 
@@ -222,23 +241,7 @@ export default function AdminPublicaciones() {
     setMensaje("");
 
     try {
-      let contenido: Record<string, unknown>;
-
-      try {
-        const contenidoParseado: unknown = JSON.parse(formulario.contenido);
-
-        if (
-          typeof contenidoParseado !== "object" ||
-          contenidoParseado === null ||
-          Array.isArray(contenidoParseado)
-        ) {
-          throw new Error("El contenido debe ser un objeto JSON.");
-        }
-
-        contenido = contenidoParseado as Record<string, unknown>;
-      } catch {
-        throw new Error("El contenido debe ser un objeto JSON válido.");
-      }
+      const contenido = formulario.contenido;
 
       const esEdicion = publicacionEditando !== null;
 
@@ -246,8 +249,16 @@ export default function AdminPublicaciones() {
         ? `${API_URL}/publicaciones/${publicacionEditando}`
         : `${API_URL}/publicaciones`;
 
-      let imagen = formulario.imagen.trim() || undefined;
-      let imagenPublicId = formulario.imagenPublicId.trim() || undefined;
+      let imagen: string | null | undefined =
+        formulario.imagen.trim() || undefined;
+
+      let imagenPublicId: string | null | undefined =
+        formulario.imagenPublicId.trim() || undefined;
+
+      if (imagenEliminada) {
+        imagen = null;
+        imagenPublicId = null;
+      }
 
       if (imagenSeleccionada) {
         const imagenSubida = await subirImagenCloudinary(imagenSeleccionada);
@@ -318,7 +329,10 @@ export default function AdminPublicaciones() {
         titulo: "",
         slug: "",
         resumen: "",
-        contenido: '{\n  "secciones": []\n}',
+        contenido: {
+          type: "doc",
+          content: [{ type: "paragraph" }],
+        } as JSONContent,
         tipo: "",
         categoria: "",
         fecha: "",
@@ -551,20 +565,15 @@ export default function AdminPublicaciones() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Contenido (JSON) *
+                  Contenido *
                 </label>
-                <textarea
-                  required
-                  rows={8}
-                  value={formulario.contenido}
-                  onChange={(e) =>
-                    setFormulario({ ...formulario, contenido: e.target.value })
+
+                <EditorContenido
+                  contenido={formulario.contenido}
+                  onChange={(contenido) =>
+                    setFormulario((prev) => ({ ...prev, contenido }))
                   }
-                  className="w-full rounded-lg border border-slate-300 bg-white p-3 font-mono text-sm text-slate-900"
                 />
-                <p className="mt-1 text-xs text-slate-500">
-                  Debe contener un objeto JSON válido.
-                </p>
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
@@ -702,7 +711,10 @@ export default function AdminPublicaciones() {
 
                     <button
                       type="button"
-                      onClick={() => seleccionarImagen(null)}
+                      onClick={() => {
+                        seleccionarImagen(null);
+                        setImagenEliminada(true);
+                      }}
                       title="Eliminar imagen"
                       aria-label="Eliminar imagen"
                       className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-600 shadow-md transition hover:bg-red-50"
@@ -791,7 +803,10 @@ export default function AdminPublicaciones() {
                       titulo: "",
                       slug: "",
                       resumen: "",
-                      contenido: '{\n  "secciones": []\n}',
+                      contenido: {
+                        type: "doc",
+                        content: [{ type: "paragraph" }],
+                      } as JSONContent,
                       tipo: "",
                       categoria: "",
                       fecha: "",

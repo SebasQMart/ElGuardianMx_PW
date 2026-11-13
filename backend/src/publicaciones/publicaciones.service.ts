@@ -129,6 +129,12 @@ export class PublicacionesService {
           ...(fecha !== undefined && {
             fecha: new Date(fecha),
           }),
+          ...(dto.imagen !== undefined && {
+            imagen: dto.imagen,
+          }),
+          ...(dto.imagenPublicId !== undefined && {
+            imagenPublicId: dto.imagenPublicId,
+          }),
         };
 
         const actualizada = await this.prisma.publicacion.update({

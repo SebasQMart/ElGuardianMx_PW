@@ -69,10 +69,11 @@
 
 .imagenPortada {
     display: block;
-    width: 100%;
-    max-height: 520px;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
+    width: 85%;
+    height: auto;
+    max-height: 420px;
+    object-fit: contain;
+    margin: 0 auto;
     border-radius: 14px;
     background: #e8edf2;
 }
@@ -100,6 +101,72 @@
 
 .contenido p {
     margin: 0 0 22px;
+}
+
+/* Encabezados del contenido */
+.contenido h3 {
+    margin: 32px 0 14px;
+    color: var(--detalle-navy);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+/* Listas */
+.contenido ul,
+.contenido ol {
+    margin: 0 0 24px;
+    padding-left: 30px;
+}
+
+.contenido ul {
+    list-style-type: disc;
+}
+
+.contenido ol {
+    list-style-type: decimal;
+}
+
+.contenido li {
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+/* Enlaces */
+.contenido a {
+    color: #1769aa;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.contenido a:hover {
+    color: var(--detalle-navy);
+}
+
+/* Texto en negritas y cursivas */
+.contenido strong {
+    color: var(--detalle-navy);
+    font-weight: 750;
+}
+
+.contenido em {
+    font-style: italic;
+}
+
+.contenido u {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.contenido s {
+    text-decoration: line-through;
+}
+
+/* Separadores */
+.contenido hr {
+    margin: 32px 0;
+    border: 0;
+    border-top: 1px solid #dce3e9;
 }
 
 .entradilla {

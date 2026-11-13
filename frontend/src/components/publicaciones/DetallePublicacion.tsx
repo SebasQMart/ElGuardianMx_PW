@@ -1,6 +1,7 @@
 import type { Publicacion } from "@/lib/publicaciones";
 import styles from "./DetallePublicacion.module.css";
 import Link from "next/link";
+import ContenidoPublicacion from "@/components/publicaciones/ContenidoPublicacion";
 
 type DetallePublicacionProps = {
   publicacion: Publicacion;
@@ -50,44 +51,14 @@ export default function DetallePublicacion({
             src={publicacion.imagen}
             alt={`Imagen ilustrativa de: ${publicacion.titulo}`}
           />
-          <figcaption className={styles.pieImagen}>
-            {publicacion.titulo}
-          </figcaption>
+          
         </figure>
       )}
 
       <div className={styles.contenido}>
-        <p className={styles.entradilla}>
-          {publicacion.resumen ?? "Descripción no disponible."}
-        </p>
+        
 
-        <h2>Contexto</h2>
-
-        <p>
-          En esta sección desarrollaremos los antecedentes de la publicación,
-          explicando el tema, los actores involucrados y su relevancia para la
-          ciudadanía.
-        </p>
-
-        <blockquote>
-          La información pública debe presentarse con claridad, contexto y
-          fuentes que permitan verificar los hechos.
-        </blockquote>
-
-        <h2>Los datos detrás de la historia</h2>
-
-        <p>
-          Aquí se incorporarán los hallazgos, cifras, documentos y explicaciones
-          correspondientes a esta publicación.
-        </p>
-
-        <section className={styles.fuentes}>
-          <h2>Fuentes y referencias</h2>
-          <p>
-            Las fuentes documentales y referencias verificables se agregarán
-            cuando se integre el contenido definitivo.
-          </p>
-        </section>
+        <ContenidoPublicacion contenido={publicacion.contenido} />
 
         {publicacion.demo && (
           <p className={styles.nota}>
