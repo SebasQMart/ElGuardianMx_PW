@@ -8,6 +8,25 @@ import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+function generarSlug(texto: string): string {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function obtenerFechaActual(): string {
+  const hoy = new Date();
+
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+  const dia = String(hoy.getDate()).padStart(2, "0");
+
+  return `${anio}-${mes}-${dia}`;
+}
+
 export default function AdminPublicaciones() {
   const router = useRouter();
 
@@ -32,6 +51,8 @@ export default function AdminPublicaciones() {
   const [publicacionEditando, setPublicacionEditando] = useState<string | null>(
     null,
   );
+
+  const [personalizarSlug, setPersonalizarSlug] = useState(false);
 
   const [formulario, setFormulario] = useState({
     titulo: "",
@@ -68,6 +89,7 @@ export default function AdminPublicaciones() {
 
     setErrorFormulario("");
     setMensaje("");
+    setPersonalizarSlug(false);
     setMostrarFormulario(true);
 
     window.scrollTo({
@@ -242,7 +264,7 @@ export default function AdminPublicaciones() {
         },
         body: JSON.stringify({
           titulo: formulario.titulo.trim(),
-          slug: formulario.slug.trim(),
+          slug: generarSlug(formulario.slug.trim() || formulario.titulo),
           contenido,
           resumen: formulario.resumen.trim() || undefined,
           tipo: formulario.tipo.trim() || undefined,
@@ -306,7 +328,7 @@ export default function AdminPublicaciones() {
         demo: false,
         estado: "BORRADOR",
       });
-
+      setPersonalizarSlug(false);
       setImagenSeleccionada(null);
       setVistaPreviaImagen("");
     } catch (error) {
@@ -426,30 +448,91 @@ export default function AdminPublicaciones() {
                   minLength={3}
                   maxLength={180}
                   value={formulario.titulo}
-                  onChange={(e) =>
-                    setFormulario({ ...formulario, titulo: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const nuevoTitulo = e.target.value;
+
+                    setFormulario((prev) => ({
+                      ...prev,
+                      titulo: nuevoTitulo,
+                      slug:
+                        personalizarSlug || publicacionEditando
+                          ? prev.slug
+                          : generarSlug(nuevoTitulo),
+                    }));
+                  }}
                   className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
                   placeholder="Título de la publicación"
                 />
               </div>
 
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Slug (URL) *
-                </label>
-                <input
-                  required
-                  minLength={3}
-                  maxLength={200}
-                  value={formulario.slug}
-                  onChange={(e) =>
-                    setFormulario({ ...formulario, slug: e.target.value })
-                  }
-                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
-                  placeholder="titulo-de-la-publicacion"
-                />
+              <div className="flex items-center justify-between rounded-lg border border-gray-200 p-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Personalizar URL
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Permite modificar el enlace de esta publicación.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={personalizarSlug}
+                  onClick={() => {
+                    setPersonalizarSlug((prev) => {
+                      const nuevoEstado = !prev;
+
+                      if (!nuevoEstado) {
+                        setFormulario((form) => ({
+                          ...form,
+                          slug: generarSlug(form.titulo),
+                        }));
+                      }
+
+                      return nuevoEstado;
+                    });
+                  }}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    personalizarSlug ? "bg-blue-600" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      personalizarSlug ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
+              {personalizarSlug && (
+                <div>
+                  <label
+                    htmlFor="slug"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
+                    URL personalizada (Slug)
+                  </label>
+
+                  <input
+                    id="slug"
+                    type="text"
+                    value={formulario.slug}
+                    onChange={(e) =>
+                      setFormulario({
+                        ...formulario,
+                        slug: e.target.value,
+                      })
+                    }
+                    placeholder="ejemplo-de-url"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+
+                  <p className="mt-1 text-xs text-gray-500">
+                    Se eliminarán automáticamente acentos y caracteres
+                    especiales al guardar.
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -517,7 +600,10 @@ export default function AdminPublicaciones() {
                     placeholder="Justicia, política..."
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                {/* Fecha */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Fecha
@@ -532,6 +618,7 @@ export default function AdminPublicaciones() {
                   />
                 </div>
 
+                {/* Tiempo de lectura */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Tiempo de lectura (minutos)
@@ -550,78 +637,108 @@ export default function AdminPublicaciones() {
                     className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
                   />
                 </div>
-              </div>
 
-              <div>
+                {/* Estado */}
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Imagen de la publicación
+                    Estado
                   </label>
-
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                  <select
+                    value={formulario.estado}
                     onChange={(e) =>
-                      seleccionarImagen(e.target.files?.[0] ?? null)
+                      setFormulario({
+                        ...formulario,
+                        estado: e.target.value as
+                          | "BORRADOR"
+                          | "PUBLICADA"
+                          | "ARCHIVADA",
+                      })
                     }
                     className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
-                  />
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Formatos permitidos: JPG, JPEG y PNG. Máximo 5 MB.
-                  </p>
-
-                  {vistaPreviaImagen && (
-                    <div className="mt-4">
-                      <p className="mb-2 text-sm font-medium text-slate-700">
-                        Vista previa
-                      </p>
-
-                      <Image
-                        src={vistaPreviaImagen}
-                        alt="Vista previa de la publicación"
-                        width={800}
-                        height={450}
-                        unoptimized
-                        className="h-48 w-full rounded-lg border border-slate-200 object-contain bg-slate-50"
-                      />
-                    </div>
-                  )}
+                  >
+                    <option value="BORRADOR">Borrador</option>
+                    <option value="PUBLICADA">Publicada</option>
+                    <option value="ARCHIVADA">Archivada</option>
+                  </select>
                 </div>
-
-                <input
-                  type="url"
-                  maxLength={1000}
-                  value={formulario.imagen}
-                  onChange={(e) =>
-                    setFormulario({ ...formulario, imagen: e.target.value })
-                  }
-                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                />
               </div>
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Estado
+                  Imagen de la publicación
                 </label>
-                <select
-                  value={formulario.estado}
-                  onChange={(e) =>
-                    setFormulario({
-                      ...formulario,
-                      estado: e.target.value as
-                        | "BORRADOR"
-                        | "PUBLICADA"
-                        | "ARCHIVADA",
-                    })
-                  }
-                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
-                >
-                  <option value="BORRADOR">Borrador</option>
-                  <option value="PUBLICADA">Publicada</option>
-                  <option value="ARCHIVADA">Archivada</option>
-                </select>
+
+                {!vistaPreviaImagen ? (
+                  <label
+                    htmlFor="imagen-publicacion"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="h-5 w-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 16V4m0 0L7 9m5-5 5 5M4 16v4h16v-4"
+                      />
+                    </svg>
+                    Subir imagen
+                  </label>
+                ) : (
+                  <div className="relative mt-3 max-w-2xl">
+                    <Image
+                      src={vistaPreviaImagen}
+                      alt="Vista previa de la publicación"
+                      width={800}
+                      height={450}
+                      unoptimized
+                      className="h-48 w-full rounded-lg border border-slate-200 object-contain bg-slate-50"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => seleccionarImagen(null)}
+                      title="Eliminar imagen"
+                      aria-label="Eliminar imagen"
+                      className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-600 shadow-md transition hover:bg-red-50"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className="h-5 w-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3 6h18m-2 0-.9 14H5.9L5 6m4 0V4h6v2m-5 4v6m4-6v6"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+
+                <input
+                  id="imagen-publicacion"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                  onChange={(e) => {
+                    seleccionarImagen(e.target.files?.[0] ?? null);
+                    e.target.value = "";
+                  }}
+                  className="hidden"
+                />
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Formatos permitidos: JPG, JPEG y PNG. Máximo 5 MB.
+                </p>
               </div>
 
               <label className="flex items-center gap-3 text-sm text-slate-700">
@@ -664,6 +781,7 @@ export default function AdminPublicaciones() {
                 <button
                   type="button"
                   onClick={() => {
+                    setPersonalizarSlug(false);
                     setMostrarFormulario(false);
                     setPublicacionEditando(null);
                     setErrorFormulario("");
@@ -711,6 +829,11 @@ export default function AdminPublicaciones() {
                 onClick={() => {
                   setMensaje("");
                   setErrorFormulario("");
+                  setPersonalizarSlug(false);
+                  setFormulario((prev) => ({
+                    ...prev,
+                    fecha: obtenerFechaActual(),
+                  }));
                   setMostrarFormulario(true);
                 }}
                 className="rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"

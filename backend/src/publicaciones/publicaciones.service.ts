@@ -57,27 +57,46 @@ export class PublicacionesService {
 
   // Crear una publicación.
   async create(dto: CreatePublicacionDto) {
-    try {
-      const { fecha, contenido, ...campos } = dto;
+    const { fecha, contenido, ...campos } = dto;
 
-      return await this.prisma.publicacion.create({
-        data: {
-          ...campos,
-          contenido: contenido as Prisma.InputJsonValue,
-          ...(fecha !== undefined && {
-            fecha: new Date(fecha),
-          }),
-        },
-      });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Ya existe una publicación con ese slug');
+    const slugBase = campos.slug;
+    let slugActual = slugBase;
+    let consecutivo = 2;
+
+    while (true) {
+      try {
+        return await this.prisma.publicacion.create({
+          data: {
+            ...campos,
+            slug: slugActual,
+            contenido: contenido as Prisma.InputJsonValue,
+            ...(fecha !== undefined && {
+              fecha: new Date(fecha),
+            }),
+          },
+        });
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2002'
+        ) {
+          const slugExistente = await this.prisma.publicacion.findUnique({
+            where: { slug: slugActual },
+          });
+
+          if (!slugExistente) {
+            throw new ConflictException(
+              'No se pudo crear la publicación por un conflicto de datos',
+            );
+          }
+
+          slugActual = `${slugBase}-${consecutivo}`;
+          consecutivo++;
+          continue;
+        }
+
+        throw error;
       }
-
-      throw error;
     }
   }
 
@@ -91,50 +110,82 @@ export class PublicacionesService {
       throw new NotFoundException('Publicación no encontrada');
     }
 
-    try {
-      const { fecha, contenido, ...campos } = dto;
+    const { fecha, contenido, ...campos } = dto;
 
-      const data: Prisma.PublicacionUpdateInput = {
-        ...campos,
-        ...(contenido !== undefined && {
-          contenido: contenido as Prisma.InputJsonValue,
-        }),
-        ...(fecha !== undefined && {
-          fecha: new Date(fecha),
-        }),
-      };
+    const slugBase = campos.slug;
+    let slugActual = slugBase;
+    let consecutivo = 2;
 
-      const actualizada = await this.prisma.publicacion.update({
-        where: { id },
-        data,
-      });
+    while (true) {
+      try {
+        const data: Prisma.PublicacionUpdateInput = {
+          ...campos,
+          ...(slugActual !== undefined && {
+            slug: slugActual,
+          }),
+          ...(contenido !== undefined && {
+            contenido: contenido as Prisma.InputJsonValue,
+          }),
+          ...(fecha !== undefined && {
+            fecha: new Date(fecha),
+          }),
+        };
 
-      // Eliminar la imagen anterior si fue sustituida.
-      if (
-        existente.imagenPublicId &&
-        dto.imagenPublicId !== undefined &&
-        dto.imagenPublicId !== existente.imagenPublicId
-      ) {
-        try {
-          await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
-        } catch (error) {
-          console.error(
-            'No fue posible eliminar la imagen anterior de Cloudinary:',
-            error,
-          );
+        const actualizada = await this.prisma.publicacion.update({
+          where: { id },
+          data,
+        });
+
+        // Eliminar la imagen anterior si fue sustituida.
+        if (
+          existente.imagenPublicId &&
+          dto.imagenPublicId !== undefined &&
+          dto.imagenPublicId !== existente.imagenPublicId
+        ) {
+          try {
+            await this.cloudinaryService.eliminarImagen(
+              existente.imagenPublicId,
+            );
+          } catch (error) {
+            console.error(
+              'No fue posible eliminar la imagen anterior de Cloudinary:',
+              error,
+            );
+          }
         }
-      }
 
-      return actualizada;
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Ya existe otra publicación con ese slug');
-      }
+        return actualizada;
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2002'
+        ) {
+          if (slugActual === undefined) {
+            throw new ConflictException(
+              'No se pudo actualizar la publicación por un conflicto de datos',
+            );
+          }
 
-      throw error;
+          const slugExistente = await this.prisma.publicacion.findFirst({
+            where: {
+              slug: slugActual,
+              id: { not: id },
+            },
+          });
+
+          if (!slugExistente) {
+            throw new ConflictException(
+              'No se pudo actualizar la publicación por un conflicto de datos',
+            );
+          }
+
+          slugActual = `${slugBase}-${consecutivo}`;
+          consecutivo++;
+          continue;
+        }
+
+        throw error;
+      }
     }
   }
 
