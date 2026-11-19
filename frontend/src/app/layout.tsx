@@ -1,9 +1,9 @@
-
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavigationWrapper from "@/components/navigation/NavigationWrapper";
+import { NotificacionesProvider } from "@/context/NotificacionesContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +31,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={null}>
-          <NavigationWrapper />
-        </Suspense>
+        <NotificacionesProvider>
+          <Suspense fallback={null}>
+            <NavigationWrapper />
+          </Suspense>
 
-        {children}
+          {children}
+        </NotificacionesProvider>
       </body>
     </html>
   );

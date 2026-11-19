@@ -41,21 +41,21 @@ model AdminSession {
 }
 
 model Publicacion {
-  id        String            @id @default(uuid())
-  slug      String            @unique
-  titulo    String
-  resumen   String?
-  contenido Json              @default("{}")
-  tipo      String?
-  categoria String?
-  fecha     DateTime?
-  imagen    String?
+  id             String            @id @default(uuid())
+  slug           String            @unique
+  titulo         String
+  resumen        String?
+  contenido      Json              @default("{}")
+  tipo           String?
+  categoria      String[]          @default([])
+  fecha          DateTime?
+  imagen         String?
   imagenPublicId String?
-  lectura   Int               @default(1)
-  demo      Boolean           @default(false)
-  estado    EstadoPublicacion @default(BORRADOR)
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  lectura        Int               @default(1)
+  demo           Boolean           @default(false)
+  estado         EstadoPublicacion @default(BORRADOR)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   @@index([estado])
   @@index([fecha])
@@ -114,4 +114,20 @@ model Audiencia {
   @@index([juzgado])
   @@index([estado])
   @@map("audiencias")
+}
+
+model OpcionTipoPublicacion {
+  id        String   @id @default(uuid()) @db.Uuid
+  nombre    String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("opciones_tipos_publicacion")
+}
+
+model OpcionCategoriaPublicacion {
+  id        String   @id @default(uuid()) @db.Uuid
+  nombre    String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("opciones_categorias_publicacion")
 }

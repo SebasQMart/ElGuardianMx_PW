@@ -7,6 +7,7 @@ import AlertaEliminacion from "@/components/ui/AlertaEliminacion";
 import Image from "next/image";
 import type { JSONContent } from "@tiptap/core";
 import EditorContenido from "@/components/admin/EditorContenido";
+import { useNotificaciones } from "@/context/NotificacionesContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -32,13 +33,14 @@ function obtenerFechaActual(): string {
 export default function AdminPublicaciones() {
   const router = useRouter();
 
+  const { mostrarNotificacion } = useNotificaciones();
+
   const [publicaciones, setPublicaciones] = useState<Publicacion[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [guardando, setGuardando] = useState(false);
-  const [mensaje, setMensaje] = useState("");
   const [errorFormulario, setErrorFormulario] = useState("");
   const [imagenSeleccionada, setImagenSeleccionada] = useState<File | null>(
     null,
@@ -66,7 +68,7 @@ export default function AdminPublicaciones() {
       content: [{ type: "paragraph" }],
     } as JSONContent,
     tipo: "",
-    categoria: "",
+    categoria: [] as string[],
     fecha: "",
     imagen: "",
     imagenPublicId: "",
@@ -74,6 +76,21 @@ export default function AdminPublicaciones() {
     demo: false,
     estado: "BORRADOR" as "BORRADOR" | "PUBLICADA" | "ARCHIVADA",
   });
+
+  const [tiposDisponibles, setTiposDisponibles] = useState<
+    { id: string; nombre: string }[]
+  >([]);
+
+  const [categoriasDisponibles, setCategoriasDisponibles] = useState<
+    { id: string; nombre: string }[]
+  >([]);
+
+  const [nuevoTipo, setNuevoTipo] = useState("");
+  const [mostrarNuevoTipo, setMostrarNuevoTipo] = useState(false);
+
+  const [nuevaCategoria, setNuevaCategoria] = useState("");
+  const [mostrarNuevaCategoria, setMostrarNuevaCategoria] = useState(false);
+  const [mostrarCategorias, setMostrarCategorias] = useState(false);
 
   function editarPublicacion(publicacion: Publicacion) {
     setPublicacionEditando(publicacion.id);
@@ -96,7 +113,7 @@ export default function AdminPublicaciones() {
               content: [{ type: "paragraph" }],
             },
       tipo: publicacion.tipo ?? "",
-      categoria: publicacion.categoria ?? "",
+      categoria: publicacion.categoria ?? [],
       fecha: publicacion.fecha ? publicacion.fecha.substring(0, 10) : "",
       imagen: publicacion.imagen ?? "",
       imagenPublicId: publicacion.imagenPublicId ?? "",
@@ -106,7 +123,6 @@ export default function AdminPublicaciones() {
     });
 
     setErrorFormulario("");
-    setMensaje("");
     setPersonalizarSlug(false);
     setMostrarFormulario(true);
 
@@ -189,7 +205,6 @@ export default function AdminPublicaciones() {
     }
 
     setEliminando(true);
-    setMensaje("");
     setErrorFormulario("");
 
     try {
@@ -218,7 +233,7 @@ export default function AdminPublicaciones() {
         actuales.filter((item) => item.id !== publicacionPorEliminar.id),
       );
 
-      setMensaje("La publicación se eliminó correctamente.");
+      mostrarNotificacion("La publicación se eliminó correctamente.", "exito");
       setPublicacionPorEliminar(null);
     } catch (error) {
       setErrorFormulario(
@@ -233,12 +248,97 @@ export default function AdminPublicaciones() {
     }
   }
 
+  async function agregarTipo() {
+    const nombre = nuevoTipo.trim();
+
+    if (!nombre) return;
+
+    try {
+      const respuesta = await fetch(`${API_URL}/catalogos/tipos`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nombre }),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error(
+          respuesta.status === 409
+            ? "Este tipo ya existe."
+            : "No fue posible agregar el tipo.",
+        );
+      }
+
+      const nuevoRegistro = await respuesta.json();
+
+      setTiposDisponibles((actuales) => [...actuales, nuevoRegistro]);
+
+      setFormulario((actual) => ({
+        ...actual,
+        tipo: nuevoRegistro.nombre,
+      }));
+
+      setNuevoTipo("");
+      setMostrarNuevoTipo(false);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error al agregar el tipo.",
+      );
+    }
+  }
+
+  async function agregarCategoria() {
+    const nombre = nuevaCategoria.trim();
+
+    if (!nombre) return;
+
+    try {
+      const respuesta = await fetch(`${API_URL}/catalogos/categorias`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nombre }),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error(
+          respuesta.status === 409
+            ? "Esta categoría ya existe."
+            : "No fue posible agregar la categoría.",
+        );
+      }
+
+      const nuevoRegistro = await respuesta.json();
+
+      setCategoriasDisponibles((actuales) => [...actuales, nuevoRegistro]);
+
+      setFormulario((actual) => ({
+        ...actual,
+        categoria: [...actual.categoria, nuevoRegistro.nombre],
+      }));
+
+      setNuevaCategoria("");
+      setMostrarNuevaCategoria(false);
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error al agregar la categoría.",
+      );
+    }
+  }
+
   async function guardarPublicacion(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setGuardando(true);
     setErrorFormulario("");
-    setMensaje("");
 
     try {
       const contenido = formulario.contenido;
@@ -279,7 +379,7 @@ export default function AdminPublicaciones() {
           contenido,
           resumen: formulario.resumen.trim() || undefined,
           tipo: formulario.tipo.trim() || undefined,
-          categoria: formulario.categoria.trim() || undefined,
+          categoria: formulario.categoria,
           fecha: formulario.fecha || undefined,
           imagen,
           imagenPublicId,
@@ -317,10 +417,11 @@ export default function AdminPublicaciones() {
           : [publicacionGuardada, ...actuales],
       );
 
-      setMensaje(
+      mostrarNotificacion(
         esEdicion
           ? "La publicación se actualizó correctamente."
           : "La publicación se registró correctamente.",
+        "exito",
       );
 
       setPublicacionEditando(null);
@@ -334,7 +435,7 @@ export default function AdminPublicaciones() {
           content: [{ type: "paragraph" }],
         } as JSONContent,
         tipo: "",
-        categoria: "",
+        categoria: [],
         fecha: "",
         imagen: "",
         imagenPublicId: "",
@@ -400,6 +501,45 @@ export default function AdminPublicaciones() {
       activo = false;
     };
   }, [router]);
+
+  useEffect(() => {
+    let activo = true;
+
+    async function cargarCatalogos() {
+      try {
+        const [respuestaTipos, respuestaCategorias] = await Promise.all([
+          fetch(`${API_URL}/catalogos/tipos`, {
+            cache: "no-store",
+          }),
+          fetch(`${API_URL}/catalogos/categorias`, {
+            cache: "no-store",
+          }),
+        ]);
+
+        if (!respuestaTipos.ok || !respuestaCategorias.ok) {
+          throw new Error("No fue posible cargar los catálogos.");
+        }
+
+        const [tipos, categorias] = await Promise.all([
+          respuestaTipos.json(),
+          respuestaCategorias.json(),
+        ]);
+
+        if (activo) {
+          setTiposDisponibles(tipos);
+          setCategoriasDisponibles(categorias);
+        }
+      } catch (error) {
+        console.error("Error al cargar los catálogos:", error);
+      }
+    }
+
+    void cargarCatalogos();
+
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   if (cargando) {
     return (
@@ -581,33 +721,152 @@ export default function AdminPublicaciones() {
                   <label className="mb-2 block text-sm font-medium text-slate-700">
                     Tipo
                   </label>
-                  <input
-                    maxLength={100}
+
+                  <select
                     value={formulario.tipo}
                     onChange={(e) =>
                       setFormulario({ ...formulario, tipo: e.target.value })
                     }
                     className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
-                    placeholder="Investigación, noticia..."
-                  />
+                  >
+                    <option value="">Selecciona un tipo</option>
+
+                    {tiposDisponibles.map((tipo) => (
+                      <option key={tipo.id} value={tipo.nombre}>
+                        {tipo.nombre}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    onClick={() => setMostrarNuevoTipo(!mostrarNuevoTipo)}
+                    className="mt-2 text-sm font-medium text-blue-700 hover:text-blue-900"
+                  >
+                    {mostrarNuevoTipo ? "Cancelar" : "+ Agregar tipo"}
+                  </button>
+
+                  {mostrarNuevoTipo && (
+                    <div className="mt-3 flex gap-2">
+                      <input
+                        type="text"
+                        maxLength={100}
+                        value={nuevoTipo}
+                        onChange={(e) => setNuevoTipo(e.target.value)}
+                        placeholder="Nombre del nuevo tipo"
+                        className="min-w-0 flex-1 rounded-lg border border-slate-300 p-3 text-slate-900"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={agregarTipo}
+                        disabled={!nuevoTipo.trim()}
+                        className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800 disabled:opacity-50"
+                      >
+                        Guardar
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div>
                   <label className="mb-2 block text-sm font-medium text-slate-700">
-                    Categoría
+                    Categorías
                   </label>
-                  <input
-                    maxLength={100}
-                    value={formulario.categoria}
-                    onChange={(e) =>
-                      setFormulario({
-                        ...formulario,
-                        categoria: e.target.value,
-                      })
+
+                  <button
+                    type="button"
+                    onClick={() => setMostrarCategorias(!mostrarCategorias)}
+                    className="flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white p-3 text-left text-sm text-slate-700 hover:bg-slate-50"
+                  >
+                    <span>
+                      {formulario.categoria.length > 0
+                        ? `${formulario.categoria.length} categorías seleccionadas`
+                        : "Seleccionar categorías"}
+                    </span>
+
+                    <span>{mostrarCategorias ? "▲" : "▼"}</span>
+                  </button>
+
+                  {mostrarCategorias && (
+                    <div className="mt-2 max-h-56 space-y-3 overflow-y-auto rounded-lg border border-slate-300 bg-white p-3">
+                      {categoriasDisponibles.length === 0 ? (
+                        <p className="text-sm text-slate-500">
+                          No hay categorías disponibles.
+                        </p>
+                      ) : (
+                        categoriasDisponibles.map((categoria) => {
+                          const seleccionada = formulario.categoria.includes(
+                            categoria.nombre,
+                          );
+
+                          return (
+                            <label
+                              key={categoria.id}
+                              className="flex cursor-pointer items-center gap-3 text-sm text-slate-700"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={seleccionada}
+                                onChange={() =>
+                                  setFormulario((actual) => ({
+                                    ...actual,
+                                    categoria: seleccionada
+                                      ? actual.categoria.filter(
+                                          (nombre) =>
+                                            nombre !== categoria.nombre,
+                                        )
+                                      : [...actual.categoria, categoria.nombre],
+                                  }))
+                                }
+                                className="h-4 w-4 cursor-pointer rounded border-slate-300 text-blue-700 focus:ring-blue-600"
+                              />
+
+                              <span>{categoria.nombre}</span>
+                            </label>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMostrarNuevaCategoria(!mostrarNuevaCategoria)
                     }
-                    className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900"
-                    placeholder="Justicia, política..."
-                  />
+                    className="mt-2 text-sm font-medium text-blue-700 hover:text-blue-900"
+                  >
+                    {mostrarNuevaCategoria ? "Cancelar" : "+ Agregar categoría"}
+                  </button>
+
+                  {mostrarNuevaCategoria && (
+                    <div className="mt-3 flex gap-2">
+                      <input
+                        type="text"
+                        maxLength={100}
+                        value={nuevaCategoria}
+                        onChange={(e) => setNuevaCategoria(e.target.value)}
+                        placeholder="Nombre de la nueva categoría"
+                        className="min-w-0 flex-1 rounded-lg border border-slate-300 p-3 text-slate-900"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={agregarCategoria}
+                        disabled={!nuevaCategoria.trim()}
+                        className="rounded-lg bg-blue-700 px-4 py-2 text-white hover:bg-blue-800 disabled:opacity-50"
+                      >
+                        Guardar
+                      </button>
+                    </div>
+                  )}
+
+                  {formulario.categoria.length > 0 && (
+                    <p className="mt-2 text-sm text-slate-500">
+                      Seleccionadas: {formulario.categoria.join(", ")}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -771,12 +1030,6 @@ export default function AdminPublicaciones() {
                 </p>
               )}
 
-              {mensaje && (
-                <p className="rounded-lg bg-green-50 p-3 text-sm text-green-700">
-                  {mensaje}
-                </p>
-              )}
-
               <div className="flex flex-wrap gap-3">
                 <button
                   type="submit"
@@ -797,7 +1050,6 @@ export default function AdminPublicaciones() {
                     setMostrarFormulario(false);
                     setPublicacionEditando(null);
                     setErrorFormulario("");
-                    setMensaje("");
 
                     setFormulario({
                       titulo: "",
@@ -808,7 +1060,7 @@ export default function AdminPublicaciones() {
                         content: [{ type: "paragraph" }],
                       } as JSONContent,
                       tipo: "",
-                      categoria: "",
+                      categoria: [],
                       fecha: "",
                       imagen: "",
                       imagenPublicId: "",
@@ -842,7 +1094,6 @@ export default function AdminPublicaciones() {
               <button
                 type="button"
                 onClick={() => {
-                  setMensaje("");
                   setErrorFormulario("");
                   setPersonalizarSlug(false);
                   setFormulario((prev) => ({
@@ -881,7 +1132,9 @@ export default function AdminPublicaciones() {
                       </h3>
 
                       <p className="mt-1 text-sm text-slate-500">
-                        {publicacion.categoria ?? "Sin categoría"}
+                        {publicacion.categoria.length > 0
+                          ? publicacion.categoria.join(", ")
+                          : "Sin categoría"}
                         {" · "}
                         {publicacion.tipo ?? "Sin tipo"}
                       </p>

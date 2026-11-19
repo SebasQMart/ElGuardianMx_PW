@@ -8,7 +8,7 @@ export type Publicacion = {
     resumen: string | null;
     contenido: Record<string, unknown>;
     tipo: string | null;
-    categoria: string | null;
+    categoria: string[];
     fecha: string | null;
     imagen: string | null;
     imagenPublicId: string | null;

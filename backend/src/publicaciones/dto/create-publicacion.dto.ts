@@ -4,6 +4,7 @@ import {
   IsIn,
   IsInt,
   IsObject,
+  IsArray,
   IsOptional,
   IsString,
   IsUrl,
@@ -39,9 +40,10 @@ export class CreatePublicacionDto {
   tipo?: string;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  categoria?: string;
+  @IsArray()
+  @IsString({ each: true })
+  @MaxLength(100, { each: true })
+  categoria?: string[];
 
   @IsOptional()
   @IsDateString()

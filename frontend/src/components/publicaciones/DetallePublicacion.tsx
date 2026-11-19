@@ -26,8 +26,11 @@ export default function DetallePublicacion({
         </Link>
 
         <p className={styles.categoria}>
-          {(publicacion.categoria ?? "Sin categoría").toUpperCase()} ·{" "}
-          {(publicacion.tipo ?? "Sin tipo").toUpperCase()}
+          {(publicacion.categoria.length > 0
+            ? publicacion.categoria.join(", ")
+            : "Sin categoría"
+          ).toUpperCase()}{" "}
+          · {(publicacion.tipo ?? "Sin tipo").toUpperCase()}
         </p>
 
         <h1 className={styles.titulo}>{publicacion.titulo}</h1>
@@ -51,13 +54,10 @@ export default function DetallePublicacion({
             src={publicacion.imagen}
             alt={`Imagen ilustrativa de: ${publicacion.titulo}`}
           />
-          
         </figure>
       )}
 
       <div className={styles.contenido}>
-        
-
         <ContenidoPublicacion contenido={publicacion.contenido} />
 
         {publicacion.demo && (

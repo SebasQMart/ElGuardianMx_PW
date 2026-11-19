@@ -7,6 +7,7 @@ import { PublicacionesModule } from './publicaciones/publicaciones.module';
 import { AliadosModule } from './aliados/aliados.module';
 import { AudienciasModule } from './audiencias/audiencias.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CatalogosModule } from './catalogos/catalogos.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     PublicacionesModule,
     AliadosModule,
     AudienciasModule,
+    CatalogosModule,
     CloudinaryModule,
   ],
 })

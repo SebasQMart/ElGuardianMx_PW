@@ -89,9 +89,9 @@ export default function Publicaciones() {
       const coincideBusqueda = texto.includes(busqueda.toLowerCase());
 
       const coincideTipo = tipo === tipos[0] || publicacion.tipo === tipo;
-
       const coincideCategoria =
-        categoria === categorias[0] || publicacion.categoria === categoria;
+        categoria === categorias[0] ||
+        publicacion.categoria.includes(categoria);
 
       return coincideBusqueda && coincideTipo && coincideCategoria;
     });
