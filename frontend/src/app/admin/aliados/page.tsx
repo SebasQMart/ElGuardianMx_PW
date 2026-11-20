@@ -406,6 +406,13 @@ export default function AliadosPage() {
 
   return (
     <main className="p-6">
+      <button
+        type="button"
+        onClick={() => router.push("/admin/dashboard")}
+        className="mb-5 text-sm font-medium text-slate-600 hover:text-amber-600"
+      >
+        ← Volver al Dashboard
+      </button>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Aliados</h1>
