@@ -75,6 +75,7 @@ model Aliado {
   nombre       String
   descripcion  String
   imagen       String?
+  imagenPublicId String?
   ubicacion    String?
   tipo         TipoAliado
   sitioOficial String?

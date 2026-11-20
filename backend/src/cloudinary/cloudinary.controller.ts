@@ -37,4 +37,27 @@ export class CloudinaryController {
   ) {
     return this.cloudinaryService.subirImagen(archivo);
   }
+
+  @Post('imagen/aliado')
+  @UseInterceptors(FileInterceptor('imagen'))
+  async subirImagenAliado(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 5 * 1024 * 1024,
+          }),
+          new FileTypeValidator({
+            fileType: /^image\/(jpeg|png)$/,
+          }),
+        ],
+      }),
+    )
+    archivo: Express.Multer.File,
+  ) {
+    return this.cloudinaryService.subirImagen(
+      archivo,
+      'observatorio-justicia-morelos/aliados',
+    );
+  }
 }

@@ -9,10 +9,14 @@ import { PrismaService } from '../prisma/prisma.service';
 
 import { CreateAliadoDto } from './dto/create-aliado.dto';
 import { UpdateAliadoDto } from './dto/update-aliado.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class AliadosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   // Consultar aliados activos para el público.
   async findActivos() {
@@ -80,13 +84,39 @@ export class AliadosService {
       ...(tipo !== undefined && {
         tipo: tipo as TipoAliado,
       }),
+      ...(dto.imagen !== undefined && {
+        imagen: dto.imagen,
+      }),
+      ...(dto.imagenPublicId !== undefined && {
+        imagenPublicId: dto.imagenPublicId,
+      }),
     };
 
-    return this.prisma.aliado.update({
+    const actualizado = await this.prisma.aliado.update({
       where: { id },
       data,
     });
+
+    // Eliminar la imagen anterior si fue sustituida o quitada.
+    if (
+      existente.imagenPublicId &&
+      dto.imagenPublicId !== undefined &&
+      dto.imagenPublicId !== existente.imagenPublicId
+    ) {
+      try {
+        await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
+      } catch (error) {
+        console.error(
+          'No fue posible eliminar la imagen anterior de Cloudinary:',
+          error,
+        );
+      }
+    }
+
+    return actualizado;
   }
+
+  // Eliminar un aliado.
 
   // Eliminar un aliado.
   async remove(id: string) {
@@ -101,6 +131,18 @@ export class AliadosService {
     await this.prisma.aliado.delete({
       where: { id },
     });
+
+    // Eliminar la imagen asociada de Cloudinary.
+    if (existente.imagenPublicId) {
+      try {
+        await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
+      } catch (error) {
+        console.error(
+          'No fue posible eliminar la imagen de Cloudinary:',
+          error,
+        );
+      }
+    }
 
     return {
       message: 'Aliado eliminado correctamente',

@@ -13,12 +13,15 @@ export class CloudinaryService {
     });
   }
 
-  async subirImagen(archivo: Express.Multer.File) {
+  async subirImagen(
+    archivo: Express.Multer.File,
+    carpeta = 'observatorio-justicia-morelos/publicaciones',
+  ) {
     return new Promise<{ url: string; publicId: string }>((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
-            folder: 'observatorio-justicia-morelos/publicaciones',
+            folder: carpeta,
             resource_type: 'image',
             allowed_formats: ['jpg', 'jpeg', 'png'],
           },

@@ -31,6 +31,11 @@ export class CreateAliadoDto {
 
   @IsOptional()
   @IsString()
+  @MaxLength(255)
+  imagenPublicId?: string;
+
+  @IsOptional()
+  @IsString()
   @MaxLength(180)
   ubicacion?: string;
 
