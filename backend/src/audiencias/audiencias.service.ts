@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Prisma, EstadoAudiencia } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 import { CreateAudienciaDto } from './dto/create-audiencia.dto';
 import { UpdateAudienciaDto } from './dto/update-audiencia.dto';
@@ -15,8 +16,10 @@ interface FiltrosAudiencia {
 
 @Injectable()
 export class AudienciasService {
-  constructor(private readonly prisma: PrismaService) {}
-
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
   // Consultar todas las audiencias para el público.
   async findAllPublic(filtros: FiltrosAudiencia) {
     const where: Prisma.AudienciaWhereInput = {};
@@ -128,10 +131,24 @@ export class AudienciasService {
       }),
     };
 
-    return this.prisma.audiencia.update({
+    const audienciaActualizada = await this.prisma.audiencia.update({
       where: { id },
       data,
     });
+
+    // Eliminar la imagen anterior si fue reemplazada o retirada.
+    if (
+      existente.imagenPublicId &&
+      existente.imagenPublicId !== audienciaActualizada.imagenPublicId
+    ) {
+      try {
+        await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
+      } catch (error) {
+        console.error('No fue posible eliminar la imagen anterior:', error);
+      }
+    }
+
+    return audienciaActualizada;
   }
 
   // Eliminar una audiencia.
@@ -147,6 +164,18 @@ export class AudienciasService {
     await this.prisma.audiencia.delete({
       where: { id },
     });
+
+    // Eliminar la imagen asociada en Cloudinary.
+    if (existente.imagenPublicId) {
+      try {
+        await this.cloudinaryService.eliminarImagen(existente.imagenPublicId);
+      } catch (error) {
+        console.error(
+          'No fue posible eliminar la imagen de Cloudinary:',
+          error,
+        );
+      }
+    }
 
     return {
       message: 'Audiencia eliminada correctamente',

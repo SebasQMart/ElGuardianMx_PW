@@ -40,6 +40,26 @@ export class CreateAudienciaDto {
   juzgado: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  expediente?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  sala?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(180)
+  juez?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(180)
+  sede?: string;
+
+  @IsOptional()
   @IsEnum(EstadoAudiencia)
   estado?: EstadoAudiencia;
 
@@ -47,4 +67,14 @@ export class CreateAudienciaDto {
   @IsString()
   @MaxLength(500)
   ubicacion?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  imagen?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  imagenPublicId?: string;
 }

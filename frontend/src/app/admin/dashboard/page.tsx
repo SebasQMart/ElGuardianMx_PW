@@ -126,7 +126,7 @@ export default function AdminDashboard() {
             href="/admin/publicaciones"
             className="block rounded-lg px-4 py-3 text-slate-300 transition hover:bg-slate-700 hover:text-white"
           >
-            <span className="mr-3">◇</span>
+            <span className="mr-3">📰</span>
             Publicaciones
           </a>
 
@@ -134,15 +134,17 @@ export default function AdminDashboard() {
             href="/admin/aliados"
             className="block rounded-lg px-4 py-3 text-slate-300 transition hover:bg-slate-700 hover:text-white"
           >
-            <span className="mr-3">◇</span>
+            <span className="mr-3">🤝</span>
             Aliados
           </a>
 
-          <div className="rounded-lg px-4 py-3 text-slate-400">
-            <span className="mr-3">▣</span>
+          <a
+            href="/admin/audiencias"
+            className="block rounded-lg px-4 py-3 text-slate-300 transition hover:bg-slate-700 hover:text-white"
+          >
+            <span className="mr-3">⚖️</span>
             Audiencias
-            <span className="ml-2 text-xs">(Próximamente)</span>
-          </div>
+          </a>
         </nav>
 
         <div className="mt-8 border-t border-slate-800 pt-6">
