@@ -1,142 +1,153 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 // EJEMPLOS O DEMO DE CONTENIDO, SE REEMPLAZARÁN CON DATOS REALES EN LA VERSIÓN FINAL
 const diapositivas = [
   {
-    etiqueta: 'EL GUARDIÁN MX',
-    titulo: 'Verdad. Justicia.',
-    destacado: 'Transparencia.',
+    etiqueta: "EL GUARDIÁN MX",
+    titulo: "Verdad. Justicia.",
+    destacado: "Transparencia.",
     descripcion:
-      'La información es poder y ese poder debe de estar siempre al servicio de la gente.',
-    boton: 'Conoce nuestras investigaciones',
-    enlace: '#investigaciones',
+      "La información es poder y ese poder debe de estar siempre al servicio de la gente.",
+    boton: "Conoce nuestras investigaciones",
+    enlace: "#investigaciones",
     imagen:
-      'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=85',
+      "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=85",
   },
   {
-    etiqueta: 'EJEMPLO 1 · DATOS',
-    titulo: 'Los datos también',
-    destacado: 'cuentan historias.',
+    etiqueta: "EJEMPLO 1 · DATOS",
+    titulo: "Los datos también",
+    destacado: "cuentan historias.",
     descripcion:
-      'Explora indicadores y fuentes para comprender mejor el funcionamiento del sistema de justicia.',
-    boton: 'Explorar datos',
-    enlace: '#secciones',
+      "Explora indicadores y fuentes para comprender mejor el funcionamiento del sistema de justicia.",
+    boton: "Explorar datos",
+    enlace: "#secciones",
     imagen:
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=85',
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=85",
   },
   {
-    etiqueta: 'EJEMPLO 2 · INVESTIGACIÓN',
-    titulo: 'Preguntar para',
-    destacado: 'llegar a la verdad.',
+    etiqueta: "EJEMPLO 2 · INVESTIGACIÓN",
+    titulo: "Preguntar para",
+    destacado: "llegar a la verdad.",
     descripcion:
-      'Investigaciones que analizan información pública y plantean preguntas relevantes para la ciudadanía.',
-    boton: 'Ver investigaciones',
-    enlace: '#investigaciones',
+      "Investigaciones que analizan información pública y plantean preguntas relevantes para la ciudadanía.",
+    boton: "Ver investigaciones",
+    enlace: "#investigaciones",
     imagen:
-      'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=85',
+      "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=85",
   },
   {
-    etiqueta: 'EJEMPLO 3 · JUSTICIA',
-    titulo: 'Entender el sistema',
-    destacado: 'es el primer paso.',
+    etiqueta: "EJEMPLO 3 · JUSTICIA",
+    titulo: "Entender el sistema",
+    destacado: "es el primer paso.",
     descripcion:
-      'Conoce las instituciones, los procedimientos y los retos que existen en el acceso a la justicia.',
-    boton: 'Explorar apartados',
-    enlace: '#secciones',
+      "Conoce las instituciones, los procedimientos y los retos que existen en el acceso a la justicia.",
+    boton: "Explorar apartados",
+    enlace: "#secciones",
     imagen:
-      'https://images.unsplash.com/photo-1589994965851-a8f479c573a9?auto=format&fit=crop&w=1600&q=85',
+      "https://images.unsplash.com/photo-1589994965851-a8f479c573a9?auto=format&fit=crop&w=1600&q=85",
   },
   {
-    etiqueta: 'EJEMPLO 4 · TRANSPARENCIA',
-    titulo: 'Información pública',
-    destacado: 'para todos.',
+    etiqueta: "EJEMPLO 4 · TRANSPARENCIA",
+    titulo: "Información pública",
+    destacado: "para todos.",
     descripcion:
-      'Consulta publicaciones, metodologías y fuentes para conocer cómo se construye cada análisis.',
-    boton: 'Conocer el proyecto',
-    enlace: '#conocenos',
+      "Consulta publicaciones, metodologías y fuentes para conocer cómo se construye cada análisis.",
+    boton: "Conocer el proyecto",
+    enlace: "#conocenos",
     imagen:
-      'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1600&q=85',
+      "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1600&q=85",
   },
 ];
 
 // EJEMPLOS O DEMO DE CONTENIDO, SE REEMPLAZARÁN CON DATOS REALES EN LA VERSIÓN FINAL
 const secciones = [
   {
-    titulo: 'Investigaciones',
-    descripcion: 'Profundizamos en los temas que impactan a nuestra sociedad con rigor y evidencia.',
-    icono: '⌕',
+    titulo: "Investigaciones",
+    descripcion:
+      "Profundizamos en los temas que impactan a nuestra sociedad con rigor y evidencia.",
+    icono: "⌕",
   },
   {
-    titulo: 'Notas',
-    descripcion: 'Información clara y verificada sobre lo que ocurre en México y el mundo.',
-    icono: '▤',
+    titulo: "Notas",
+    descripcion:
+      "Información clara y verificada sobre lo que ocurre en México y el mundo.",
+    icono: "▤",
   },
   {
-    titulo: 'Conócenos',
-    descripcion: 'Somos un medio independiente comprometido con la verdad, la ética y la ciudadanía.',
-    icono: '♧',
+    titulo: "Conócenos",
+    descripcion:
+      "Somos un medio independiente comprometido con la verdad, la ética y la ciudadanía.",
+    icono: "♧",
   },
   {
-    titulo: 'Datos',
-    descripcion: 'Consulta indicadores, estadísticas y visualizaciones sobre el sistema de justicia.',
-    icono: '▥',
+    titulo: "Datos",
+    descripcion:
+      "Consulta indicadores, estadísticas y visualizaciones sobre el sistema de justicia.",
+    icono: "▥",
   },
   {
-    titulo: 'Audiencias',
-    descripcion: 'Panorama agregado de audiencias, resultados y decisiones procesales.',
-    icono: '⚖',
+    titulo: "Audiencias",
+    descripcion:
+      "Panorama agregado de audiencias, resultados y decisiones procesales.",
+    icono: "⚖",
   },
   {
-    titulo: 'Procesos',
-    descripcion: 'Trayectorias, demoras y diagnósticos del sistema de justicia.',
-    icono: '▰',
+    titulo: "Procesos",
+    descripcion:
+      "Trayectorias, demoras y diagnósticos del sistema de justicia.",
+    icono: "▰",
   },
   {
-    titulo: 'Presupuesto',
-    descripcion: 'Recursos, personal, vacantes y costos de oportunidad.',
-    icono: '$',
+    titulo: "Presupuesto",
+    descripcion: "Recursos, personal, vacantes y costos de oportunidad.",
+    icono: "$",
   },
   {
-    titulo: 'Publicaciones',
-    descripcion: 'Reportes, fichas, visualizaciones y hemeroteca.',
-    icono: '▥',
+    titulo: "Publicaciones",
+    descripcion: "Reportes, fichas, visualizaciones y hemeroteca.",
+    icono: "▥",
   },
   {
-    titulo: 'Transparencia del proyecto',
-    descripcion: 'Quiénes somos, alianzas, metodología, correcciones y contacto.',
-    icono: '◇',
+    titulo: "Transparencia del proyecto",
+    descripcion:
+      "Quiénes somos, alianzas, metodología, correcciones y contacto.",
+    icono: "◇",
   },
   {
-    titulo: 'Participa',
-    descripcion: 'Convocatorias, servicio social, prácticas y colaboración académica.',
-    icono: '♧',
+    titulo: "Participa",
+    descripcion:
+      "Convocatorias, servicio social, prácticas y colaboración académica.",
+    icono: "♧",
   },
 ];
 
 // EJEMPLOS O DEMO DE CONTENIDO, SE REEMPLAZARÁN CON DATOS REALES EN LA VERSIÓN FINAL
 const investigaciones = [
   {
-    categoria: 'CORRUPCIÓN',
-    titulo: 'Contratos opacos: millones sin transparencia en obra pública',
-    imagen: '🌆',
+    categoria: "CORRUPCIÓN",
+    titulo: "Contratos opacos: millones sin transparencia en obra pública",
+    imagen: "🌆",
   },
   {
-    categoria: 'JUSTICIA',
-    titulo: 'Acceso a la justicia: una deuda pendiente',
-    imagen: '⚖️',
+    categoria: "JUSTICIA",
+    titulo: "Acceso a la justicia: una deuda pendiente",
+    imagen: "⚖️",
   },
   {
-    categoria: 'SEGURIDAD',
-    titulo: '¿Qué hay detrás del aumento de violencia en México?',
-    imagen: '🏢',
+    categoria: "SEGURIDAD",
+    titulo: "¿Qué hay detrás del aumento de violencia en México?",
+    imagen: "🏢",
   },
 ];
 
 export default function Home() {
   const [diapositivaActual, setDiapositivaActual] = useState(0);
-  const [inicioDeslizamiento, setInicioDeslizamiento] = useState<number | null>(null);
+  const [inicioDeslizamiento, setInicioDeslizamiento] = useState<number | null>(
+    null,
+  );
 
   const diapositiva = diapositivas[diapositivaActual];
 
@@ -147,9 +158,7 @@ export default function Home() {
   }
 
   function siguienteDiapositiva() {
-    setDiapositivaActual(
-      (actual) => (actual + 1) % diapositivas.length,
-    );
+    setDiapositivaActual((actual) => (actual + 1) % diapositivas.length);
   }
 
   function iniciarDeslizamiento(e: React.TouchEvent<HTMLElement>) {
@@ -175,23 +184,23 @@ export default function Home() {
 
   const categoriasRef = useRef<HTMLDivElement>(null);
 
-  function desplazarCategorias(direccion: 'izquierda' | 'derecha') {
+  function desplazarCategorias(direccion: "izquierda" | "derecha") {
     if (!categoriasRef.current) return;
 
     categoriasRef.current.scrollBy({
-      left: direccion === 'derecha' ? 330 : -330,
-      behavior: 'smooth',
+      left: direccion === "derecha" ? 330 : -330,
+      behavior: "smooth",
     });
   }
 
   // Conexión con el backend para obtener un mensaje de prueba
-  const [mensaje, setMensaje] = useState('Conectando con el backend...');
+  const [mensaje, setMensaje] = useState("Conectando con el backend...");
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/`)
       .then((response) => response.json())
       .then((data) => setMensaje(data.message))
-      .catch(() => setMensaje('Portal de información pública'));
+      .catch(() => setMensaje("Portal de información pública"));
   }, []);
 
   return (
@@ -213,9 +222,7 @@ export default function Home() {
             <span>{diapositiva.destacado}</span>
           </h1>
 
-          <p className="hero-description">
-            {diapositiva.descripcion}
-          </p>
+          <p className="hero-description">{diapositiva.descripcion}</p>
 
           <div className="hero-actions">
             <a className="button button-gold" href={diapositiva.enlace}>
@@ -251,10 +258,10 @@ export default function Home() {
             <button
               key={item.etiqueta}
               type="button"
-              className={index === diapositivaActual ? 'selected' : ''}
+              className={index === diapositivaActual ? "selected" : ""}
               onClick={() => setDiapositivaActual(index)}
               aria-label={`Mostrar diapositiva ${index + 1}`}
-              aria-current={index === diapositivaActual ? 'true' : undefined}
+              aria-current={index === diapositivaActual ? "true" : undefined}
             />
           ))}
         </div>
@@ -274,7 +281,7 @@ export default function Home() {
           <button
             className="category-arrow category-arrow-left"
             type="button"
-            onClick={() => desplazarCategorias('izquierda')}
+            onClick={() => desplazarCategorias("izquierda")}
             aria-label="Ver apartados anteriores"
           >
             ‹
@@ -284,19 +291,20 @@ export default function Home() {
             {secciones.map((seccion, index) => (
               <a
                 className="category-card"
-                href={`#${[
-                  'investigaciones',
-                  'notas',
-                  'conocenos',
-                  'datos',
-                  'audiencias',
-                  'procesos',
-                  'presupuesto',
-                  'publicaciones',
-                  'transparencia',
-                  'participa',
-                ][index]
-                  }`}
+                href={`#${
+                  [
+                    "investigaciones",
+                    "notas",
+                    "conocenos",
+                    "datos",
+                    "audiencias",
+                    "procesos",
+                    "presupuesto",
+                    "publicaciones",
+                    "transparencia",
+                    "participa",
+                  ][index]
+                }`}
                 key={seccion.titulo}
               >
                 <span className="category-icon" aria-hidden="true">
@@ -317,7 +325,7 @@ export default function Home() {
           <button
             className="category-arrow category-arrow-right"
             type="button"
-            onClick={() => desplazarCategorias('derecha')}
+            onClick={() => desplazarCategorias("derecha")}
             aria-label="Ver más apartados"
           >
             ›
@@ -347,7 +355,10 @@ export default function Home() {
                   {investigacion.categoria}
                 </p>
                 <h3>{investigacion.titulo}</h3>
-                <a href="#publicaciones" aria-label={`Leer: ${investigacion.titulo}`}>
+                <a
+                  href="#publicaciones"
+                  aria-label={`Leer: ${investigacion.titulo}`}
+                >
                   Leer investigación <span>→</span>
                 </a>
               </div>
@@ -355,8 +366,8 @@ export default function Home() {
           ))}
         </div>
         <p className="demo-notice">
-          Contenido demostrativo: las publicaciones se incorporarán después
-          de validar las fuentes y los datos del proyecto.
+          Contenido demostrativo: las publicaciones se incorporarán después de
+          validar las fuentes y los datos del proyecto.
         </p>
       </section>
 
@@ -364,12 +375,19 @@ export default function Home() {
         <div className="footer-main">
           <div className="footer-brand" id="conocenos">
             <a className="brand" href="#">
-              <span className="brand-mark">G</span>
-              <span>El Guardián MX</span>
+              <Image
+                src="/logo-observatorio-justicia-morelos.jpeg"
+                alt="Logo del Observatorio de Justicia Morelos"
+                width={65}
+                height={65}
+                priority
+                className="brand-logo"
+              />
+              <span>Observatorio de Justicia Morelos</span>
             </a>
             <p>
-              La información es poder y ese poder debe de estar siempre
-              al servicio de la gente.
+              La información es poder y ese poder debe de estar siempre al
+              servicio de la gente.
             </p>
             <span className="api-status">{mensaje}</span>
           </div>
@@ -401,8 +419,8 @@ export default function Home() {
         </div>
 
         <div className="footer-bottom">
-          <span>© 2026 El Guardián MX</span>
-          <span>Periodismo, datos y rendición de cuentas.</span>
+          <span>© 2026 Observatorio de Justicia Morelos</span>
+          <span>Justicia en datos.</span>
         </div>
       </footer>
     </main>

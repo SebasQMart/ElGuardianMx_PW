@@ -61,7 +61,7 @@ ENCABEZADO Y NAVEGACIÓN
   position: relative;
   z-index: 10;
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) auto minmax(100px, 1fr);
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 24px;
   min-height: 76px;
@@ -81,19 +81,34 @@ ENCABEZADO Y NAVEGACIÓN
   white-space: nowrap;
 }
 
-.brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 43px;
-  height: 43px;
-  border: 2px solid var(--white);
-  border-radius: 50%;
-  background: #05090d;
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.brand-text strong {
   color: var(--white);
-  font-family: Georgia, serif;
-  font-size: 32px;
-  font-weight: bold;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.brand-text small {
+  color: var(--gold);
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+}
+
+.brand-logo {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
@@ -785,10 +800,27 @@ RESPONSIVE: MÓVILES Y TABLETAS PEQUEÑAS
     min-width: 0;
   }
 
-  .brand-mark {
-    width: 38px;
-    height: 38px;
-    font-size: 28px;
+  .brand-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .brand span {
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  .brand-text strong {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .brand-text small {
+    font-size: 10px;
+    letter-spacing: 1.8px;
   }
 
   .mobile-menu-toggle {
@@ -825,20 +857,6 @@ RESPONSIVE: MÓVILES Y TABLETAS PEQUEÑAS
 
   .hero-arrow {
     display: none;
-  }
-
-  .header-socials {
-    gap: 4px;
-  }
-
-  .header-socials a {
-    width: 31px;
-    height: 31px;
-  }
-
-  .header-socials svg {
-    width: 20px;
-    height: 20px;
   }
 
   .main-nav {

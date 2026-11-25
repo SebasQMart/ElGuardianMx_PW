@@ -176,11 +176,6 @@ export default function Login() {
                         Acceso exclusivo para personal autorizado
                     </p>
                 </div>
-
-                <footer className={styles.pie}>
-                    <span>El Guardián MX</span>
-                    <span>Información · Transparencia · Ciudadanía</span>
-                </footer>
             </section>
         </main>
     );
