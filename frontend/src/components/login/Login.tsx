@@ -4,9 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./Login.module.css";
-
-const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { API_URL } from "@/lib/api";
 
 export default function Login() {
     const router = useRouter();

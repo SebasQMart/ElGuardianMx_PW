@@ -6,8 +6,7 @@ import Image from "next/image";
 import type { Audiencia, EstadoAudiencia } from "@/lib/audiencias";
 import { useNotificaciones } from "@/context/NotificacionesContext";
 import AlertaEliminacion from "@/components/ui/AlertaEliminacion";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+import { API_URL } from "@/lib/api";
 
 export default function AudienciasAdminPage() {
   const router = useRouter();

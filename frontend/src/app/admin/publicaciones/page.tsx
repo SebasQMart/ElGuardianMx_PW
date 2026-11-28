@@ -8,8 +8,7 @@ import Image from "next/image";
 import type { JSONContent } from "@tiptap/core";
 import EditorContenido from "@/components/admin/EditorContenido";
 import { useNotificaciones } from "@/context/NotificacionesContext";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { API_URL } from "@/lib/api";
 
 function generarSlug(texto: string): string {
   return texto

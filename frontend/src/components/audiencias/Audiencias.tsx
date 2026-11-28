@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./Audiencias.module.css";
 import Image from "next/image";
+import { API_URL } from "@/lib/api";
 
 type EstadoAudiencia =
   | "Programada"
@@ -124,7 +125,6 @@ function obtenerClaseEstado(estado: EstadoAudiencia) {
 }
 
 export default function Audiencias() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState("");

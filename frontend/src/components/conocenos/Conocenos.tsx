@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Aliado } from "@/lib/aliados";
 import styles from "./Conocenos.module.css";
 import Image from "next/image";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+import { API_URL } from "@/lib/api";
 
 export default function Conocenos() {
   const carruselRef = useRef<HTMLDivElement>(null);
